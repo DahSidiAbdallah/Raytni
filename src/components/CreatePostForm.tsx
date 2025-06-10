@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Calendar, Phone, ImagePlus } from "lucide-react";
 import { type PostDataFromForm } from "../pages/CreatePostPage";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CreatePostFormProps {
   onBack: () => void;
@@ -13,6 +14,7 @@ interface CreatePostFormProps {
 }
 
 const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     type: "",
     category: "",
@@ -24,9 +26,9 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     contactPhone: "",
     status: "lost" as 'lost' | 'found',
     images: [] as File[],
-    mainImageIndex: null as number | null
   });
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const mauritanianCities = [
     "Nouakchott", "Nouadhibou", "Kaédi", "Zouérat", "Rosso", "Atar", 
@@ -39,11 +41,29 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     animal: ["Chat", "Chien", "Oiseau", "Autre"]
   };
 
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    
+    if (!formData.title.trim()) errors.title = "Le titre est requis";
+    if (!formData.description.trim()) errors.description = "La description est requise";
+    if (!formData.type) errors.type = "La catégorie est requise";
+    if (formData.type && !formData.category) errors.category = "La sous-catégorie est requise";
+    if (!formData.location) errors.location = "Le lieu est requis";
+    if (!formData.contactName.trim()) errors.contactName = "Le nom de contact est requis";
+    if (!formData.contactPhone.trim()) errors.contactPhone = "Le téléphone de contact est requis";
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("[CreatePostForm] handleSubmit triggered. formData:", formData);
     
-    const dataForPage = {
+    if (!validateForm()) {
+      return;
+    }
+    
+    const dataForPage: PostDataFromForm = {
       title: formData.title,
       description: formData.description,
       mainCategory: formData.type, 
@@ -55,26 +75,16 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
       contactName: formData.contactName,
       contactPhone: formData.contactPhone,
     };
-    console.log("[CreatePostForm] About to call onSubmit with dataForPage:", dataForPage);
+    
     onSubmit(dataForPage);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      
-      const newMainImageIndex = filesArray.length > 0 
-        ? (formData.mainImageIndex !== null && formData.mainImageIndex < filesArray.length 
-            ? formData.mainImageIndex 
-            : 0) 
-        : null;
-      
-      setFormData({ 
-        ...formData, 
-        images: filesArray,
-        mainImageIndex: newMainImageIndex
-      });
+      setFormData({ ...formData, images: filesArray });
 
+      // Generate previews
       const newPreviews: string[] = [];
       setImagePreviews([]);
 
@@ -95,10 +105,6 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     }
   };
 
-  const handleSetMainImage = (index: number) => {
-    setFormData({ ...formData, mainImageIndex: index });
-  };
-
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <Card>
@@ -114,9 +120,12 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 </label>
                 <Select 
                     value={formData.status} 
-                    onValueChange={(value: 'lost' | 'found') => setFormData({...formData, status: value})}
+                    onValueChange={(value: 'lost' | 'found') => {
+                      setFormData({...formData, status: value});
+                      setFormErrors({...formErrors, status: ""});
+                    }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={formErrors.status ? "border-red-500" : ""}>
                     <SelectValue placeholder="Sélectionner" />
                   </SelectTrigger>
                   <SelectContent>
@@ -124,6 +133,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                     <SelectItem value="found">Trouvé</SelectItem>
                   </SelectContent>
                 </Select>
+                {formErrors.status && <p className="text-red-500 text-xs mt-1">{formErrors.status}</p>}
               </div>
 
               <div>
@@ -132,9 +142,12 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 </label>
                 <Select 
                     value={formData.type} 
-                    onValueChange={(value) => setFormData({...formData, type: value, category: ''})}
+                    onValueChange={(value) => {
+                      setFormData({...formData, type: value, category: ''});
+                      setFormErrors({...formErrors, type: ""});
+                    }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={formErrors.type ? "border-red-500" : ""}>
                     <SelectValue placeholder="Sélectionner" />
                   </SelectTrigger>
                   <SelectContent>
@@ -143,6 +156,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                     <SelectItem value="animal">Animal</SelectItem>
                   </SelectContent>
                 </Select>
+                {formErrors.type && <p className="text-red-500 text-xs mt-1">{formErrors.type}</p>}
               </div>
             </div>
 
@@ -153,10 +167,12 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 </label>
                 <Select 
                     value={formData.category} 
-                    onValueChange={(value) => setFormData({...formData, category: value})}
-                    required={!!formData.type}
+                    onValueChange={(value) => {
+                      setFormData({...formData, category: value});
+                      setFormErrors({...formErrors, category: ""});
+                    }}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className={formErrors.category ? "border-red-500" : ""}>
                     <SelectValue placeholder="Sélectionner" />
                   </SelectTrigger>
                   <SelectContent>
@@ -165,6 +181,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                     ))}
                   </SelectContent>
                 </Select>
+                {formErrors.category && <p className="text-red-500 text-xs mt-1">{formErrors.category}</p>}
               </div>
             )}
 
@@ -176,8 +193,13 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 required
                 placeholder="Ex: Téléphone Samsung perdu au marché central"
                 value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                onChange={(e) => {
+                  setFormData({...formData, title: e.target.value});
+                  setFormErrors({...formErrors, title: ""});
+                }}
+                className={formErrors.title ? "border-red-500" : ""}
               />
+              {formErrors.title && <p className="text-red-500 text-xs mt-1">{formErrors.title}</p>}
             </div>
 
             <div>
@@ -189,8 +211,13 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 rows={4}
                 placeholder="Décrivez en détail ce qui est perdu/trouvé..."
                 value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                onChange={(e) => {
+                  setFormData({...formData, description: e.target.value});
+                  setFormErrors({...formErrors, description: ""});
+                }}
+                className={formErrors.description ? "border-red-500" : ""}
               />
+              {formErrors.description && <p className="text-red-500 text-xs mt-1">{formErrors.description}</p>}
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
@@ -199,8 +226,14 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                   <MapPin className="h-4 w-4 inline mr-1" />
                   Lieu *
                 </label>
-                <Select onValueChange={(value) => setFormData({...formData, location: value})}>
-                  <SelectTrigger>
+                <Select 
+                  onValueChange={(value) => {
+                    setFormData({...formData, location: value});
+                    setFormErrors({...formErrors, location: ""});
+                  }}
+                  value={formData.location}
+                >
+                  <SelectTrigger className={formErrors.location ? "border-red-500" : ""}>
                     <SelectValue placeholder="Ville" />
                   </SelectTrigger>
                   <SelectContent>
@@ -209,6 +242,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                     ))}
                   </SelectContent>
                 </Select>
+                {formErrors.location && <p className="text-red-500 text-xs mt-1">{formErrors.location}</p>}
               </div>
 
               <div>
@@ -234,8 +268,13 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                   required
                   placeholder="Votre nom complet"
                   value={formData.contactName}
-                  onChange={(e) => setFormData({...formData, contactName: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, contactName: e.target.value});
+                    setFormErrors({...formErrors, contactName: ""});
+                  }}
+                  className={formErrors.contactName ? "border-red-500" : ""}
                 />
+                {formErrors.contactName && <p className="text-red-500 text-xs mt-1">{formErrors.contactName}</p>}
               </div>
               <div>
                 <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">
@@ -248,41 +287,43 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                   type="tel"
                   placeholder="+222 XX XX XX XX"
                   value={formData.contactPhone}
-                  onChange={(e) => setFormData({...formData, contactPhone: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, contactPhone: e.target.value});
+                    setFormErrors({...formErrors, contactPhone: ""});
+                  }}
+                  className={formErrors.contactPhone ? "border-red-500" : ""}
                 />
+                {formErrors.contactPhone && <p className="text-red-500 text-xs mt-1">{formErrors.contactPhone}</p>}
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <ImagePlus className="h-4 w-4 inline mr-1" />
-                  Photos (optionnel)
-                </label>
-                <Input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                />
-                {imagePreviews.length > 0 && (
-                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                    {imagePreviews.map((preview, index) => (
-                      <div 
-                        key={index} 
-                        className={`relative aspect-square border rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
-                      >
-                        <img 
-                          src={preview} 
-                          alt={`Preview ${index + 1}`} 
-                          className="absolute top-0 left-0 w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <ImagePlus className="h-4 w-4 inline mr-1" />
+                Photos (optionnel)
+              </label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+              />
+              {imagePreviews.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {imagePreviews.map((preview, index) => (
+                    <div 
+                      key={index} 
+                      className="relative aspect-square border rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <img 
+                        src={preview} 
+                        alt={`Preview ${index + 1}`} 
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex gap-4 pt-6">

@@ -51,6 +51,8 @@ const translations: Record<Language, Record<string, string>> = {
     'status.found': 'TROUVÉ',
     'toast.success': '✅ Signalement publié avec succès!',
     'toast.success.desc': 'Votre signalement est maintenant visible par la communauté.',
+    'toast.loading': 'Publication en cours...',
+    'toast.error': 'Erreur lors de la publication',
 
     // SignInPage
     'page.signin.title': 'Se Connecter',
@@ -97,6 +99,11 @@ const translations: Record<Language, Record<string, string>> = {
     'page.police.distanceAway': '{distance} km',
     'page.police.geolocationNotSupported': 'La géolocalisation n\'est pas supportée par ce navigateur.',
     'page.police.showingNearestFirst': 'Affichage des plus proches en premier.',
+    
+    // CreatePostPage
+    'page.createpost.toast.loading': 'Publication en cours...',
+    'page.createpost.toast.success': 'Signalement publié avec succès!',
+    'page.createpost.toast.error.generic': 'Erreur lors de la publication. Veuillez réessayer.',
   },
   ar: {
     'app.name': 'رايتني',
@@ -138,6 +145,8 @@ const translations: Record<Language, Record<string, string>> = {
     'status.found': 'موجود',
     'toast.success': '✅ تم نشر البلاغ بنجاح!',
     'toast.success.desc': 'بلاغك مرئي الآن للمجتمع.',
+    'toast.loading': 'جاري النشر...',
+    'toast.error': 'خطأ في النشر',
 
     // SignInPage
     'page.signin.title': 'تسجيل الدخول',
@@ -184,6 +193,11 @@ const translations: Record<Language, Record<string, string>> = {
     'page.police.distanceAway': '{distance} كم',
     'page.police.geolocationNotSupported': 'المتصفح لا يدعم خدمة تحديد الموقع.',
     'page.police.showingNearestFirst': 'يتم عرض الأقرب أولاً.',
+    
+    // CreatePostPage
+    'page.createpost.toast.loading': 'جاري النشر...',
+    'page.createpost.toast.success': 'تم نشر البلاغ بنجاح!',
+    'page.createpost.toast.error.generic': 'خطأ في النشر. يرجى المحاولة مرة أخرى.',
   }
 };
 

@@ -1,10 +1,12 @@
 import CreatePostForm from "@/components/CreatePostForm";
 import { useNavigate } from "react-router-dom";
+import { db, storage } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useLanguage } from "@/contexts/LanguageContext";
 import toast from 'react-hot-toast';
-import { createPost, PostInput } from "@/services/postService";
 
-// Exporting for use in CreatePostForm.tsx
+// Interface for form data from CreatePostForm
 export interface PostDataFromForm {
   title: string;
   description: string;
@@ -23,31 +25,58 @@ const CreatePostPage = () => {
   const { t } = useLanguage();
 
   const handlePostSubmit = async (dataFromForm: PostDataFromForm) => {
-    const loadingToastId = toast.loading(t('page.createpost.toast.loading') || "Création du signalement...");
+    const loadingToastId = toast.loading(t('toast.loading') || "Envoi en cours...");
 
     try {
-      // Convert the form data to the format expected by the service
-      const postData: PostInput = {
+      let imageUrl = '';
+      if (dataFromForm.imageFile) {
+        // Create a unique path for the image
+        const imagePath = `posts_images/${Date.now()}-${dataFromForm.imageFile.name}`;
+        const imageRef = ref(storage, imagePath);
+        
+        // Upload the image
+        await uploadBytes(imageRef, dataFromForm.imageFile);
+        
+        // Get the download URL
+        imageUrl = await getDownloadURL(imageRef);
+      }
+
+      // Prepare data for Firestore
+      const postToSave = {
         title: dataFromForm.title,
         description: dataFromForm.description,
-        mainCategory: dataFromForm.mainCategory,
+        category: dataFromForm.mainCategory,
         subCategory: dataFromForm.subCategory,
         locationName: dataFromForm.locationName,
-        imageFile: dataFromForm.imageFile,
+        imageUrl: imageUrl,
         status: dataFromForm.status,
-        dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound,
+        dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound || null,
         contactName: dataFromForm.contactName,
         contactPhone: dataFromForm.contactPhone,
+        createdAt: serverTimestamp(),
       };
 
-      // Create the post using the service
-      await createPost(postData);
+      // Add document to Firestore
+      const docRef = await addDoc(collection(db, "posts"), postToSave);
       
-      toast.success(t('toast.success') || "Signalement publié avec succès!", { id: loadingToastId });
-      navigate("/browse");
+      console.log("Document written with ID: ", docRef.id);
+      
+      // Show success toast
+      toast.success(t('toast.success') || "Signalement publié avec succès!", { 
+        id: loadingToastId,
+        duration: 3000
+      });
+      
+      // Navigate to browse page after successful submission
+      setTimeout(() => navigate("/browse"), 1000);
     } catch (error) {
-      console.error("Error creating post:", error);
-      toast.error(t('page.createpost.toast.error.generic') || "Erreur lors de la création du signalement.", { id: loadingToastId });
+      console.error("Error adding document: ", error);
+      
+      // Show error toast
+      toast.error(t('toast.error') || "Erreur lors de la publication", { 
+        id: loadingToastId,
+        duration: 5000
+      });
     }
   };
 
