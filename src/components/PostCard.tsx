@@ -27,12 +27,6 @@ interface PostCardProps {
 
 const PostCard = ({ post }: PostCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  // Determine which images to display
-  const hasMultipleImages = post.imageUrls && post.imageUrls.length > 1;
-  const displayImage = post.mainImageUrl || post.imageUrl || (post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls[0] : null);
-  const allImages = post.imageUrls || (post.imageUrl ? [post.imageUrl] : []);
 
   const getStatusColor = (status: string) => {
     return status === "lost" ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600";
@@ -68,21 +62,23 @@ const PostCard = ({ post }: PostCardProps) => {
     });
   };
 
-  const nextImage = () => {
-    if (hasMultipleImages) {
-      setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-    }
-  };
-
-  const prevImage = () => {
-    if (hasMultipleImages) {
-      setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
-    }
-  };
+  // Use mainImageUrl if available, otherwise use the first image from imageUrls, or imageUrl as fallback
+  const displayImage = post.mainImageUrl || (post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls[0] : post.imageUrl);
 
   return (
     <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg group">
       <CardContent className="p-6">
+        {/* Image section - only show if there's an image */}
+        {displayImage && (
+          <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg">
+            <img 
+              src={displayImage} 
+              alt={post.title} 
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          </div>
+        )}
+
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
             <div className="text-2xl p-2 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors">
@@ -98,43 +94,6 @@ const PostCard = ({ post }: PostCardProps) => {
             </span>
           </div>
         </div>
-
-        {displayImage && (
-          <div className="mb-4 rounded-lg overflow-hidden h-48 relative">
-            <img 
-              src={hasMultipleImages ? allImages[currentImageIndex] : displayImage} 
-              alt={post.title} 
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            
-            {/* Image navigation controls for multiple images */}
-            {hasMultipleImages && (
-              <>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70 transition-opacity"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70 transition-opacity"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-                
-                {/* Image counter */}
-                <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">
-                  {currentImageIndex + 1} / {allImages.length}
-                </div>
-              </>
-            )}
-          </div>
-        )}
 
         <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
           {post.title}
