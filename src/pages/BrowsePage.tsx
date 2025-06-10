@@ -93,7 +93,7 @@ const BrowsePage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" text={t('loading.text')} />
+        <LoadingSpinner size="lg\" text={t('loading.text')} />
       </div>
     );
   }
