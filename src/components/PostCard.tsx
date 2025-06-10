@@ -17,8 +17,8 @@ interface Post {
   status: string;
   createdAt: string;
   imageUrl?: string;
-  mainImageUrl?: string;
   imageUrls?: string[];
+  mainImageUrl?: string;
 }
 
 interface PostCardProps {
@@ -62,23 +62,12 @@ const PostCard = ({ post }: PostCardProps) => {
     });
   };
 
-  // Use mainImageUrl if available, otherwise use the first image from imageUrls, or imageUrl as fallback
-  const displayImage = post.mainImageUrl || (post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls[0] : post.imageUrl);
+  // Get the image to display (main image or first available)
+  const displayImage = post.mainImageUrl || post.imageUrl || (post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls[0] : null);
 
   return (
     <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg group">
       <CardContent className="p-6">
-        {/* Image section - only show if there's an image */}
-        {displayImage && (
-          <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg">
-            <img 
-              src={displayImage} 
-              alt={post.title} 
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
-        )}
-
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
             <div className="text-2xl p-2 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors">
@@ -94,6 +83,16 @@ const PostCard = ({ post }: PostCardProps) => {
             </span>
           </div>
         </div>
+
+        {displayImage && (
+          <div className="mb-4 aspect-video rounded-lg overflow-hidden">
+            <img 
+              src={displayImage} 
+              alt={post.title} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
 
         <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
           {post.title}

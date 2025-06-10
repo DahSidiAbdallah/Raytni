@@ -10,13 +10,13 @@ import toast from 'react-hot-toast';
 export interface PostDataFromForm {
   title: string;
   description: string;
-  mainCategory: string; // e.g., "personne", "objet" - maps to 'category' in Firestore
-  subCategory: string;  // e.g., "Enfant", "Téléphone" - maps to 'subCategory' in Firestore
-  locationName: string; // e.g., "Nouakchott" - maps to 'locationName' in Firestore
-  imageFiles?: File[]; // Now supports multiple files
-  mainImageIndex?: number; // Index of the main image
+  mainCategory: string;
+  subCategory: string;
+  locationName: string;
+  imageFiles: File[];
+  mainImageIndex: number;
   status: 'lost' | 'found';
-  dateTimeLostOrFound?: string; 
+  dateTimeLostOrFound?: string;
   contactName: string;
   contactPhone: string;
 }
@@ -26,20 +26,20 @@ const CreatePostPage = () => {
   const { t } = useLanguage();
 
   const handlePostSubmit = async (dataFromForm: PostDataFromForm) => {
-    console.log("[CreatePostPage] handlePostSubmit triggered with data:", dataFromForm);
     const loadingToastId = toast.loading("Publication en cours...");
 
     try {
-      // Handle multiple images
+      // Upload all images and get their URLs
       const imageUrls: string[] = [];
       let mainImageUrl = '';
       
       if (dataFromForm.imageFiles && dataFromForm.imageFiles.length > 0) {
-        // Process all images
+        // Process each image
         for (let i = 0; i < dataFromForm.imageFiles.length; i++) {
           const file = dataFromForm.imageFiles[i];
           const imagePath = `posts_images/${Date.now()}_${i}_${file.name}`;
           const imageRef = ref(storage, imagePath);
+          
           await uploadBytes(imageRef, file);
           const url = await getDownloadURL(imageRef);
           imageUrls.push(url);
@@ -49,11 +49,6 @@ const CreatePostPage = () => {
             mainImageUrl = url;
           }
         }
-      }
-
-      // If no main image was set but we have images, use the first one
-      if (!mainImageUrl && imageUrls.length > 0) {
-        mainImageUrl = imageUrls[0];
       }
 
       // Data to be saved in Firestore
@@ -72,14 +67,12 @@ const CreatePostPage = () => {
         createdAt: serverTimestamp(),
       };
 
-      console.log("[CreatePostPage] Saving post to Firestore:", postToSave);
-      const docRef = await addDoc(collection(db, "posts"), postToSave);
-      console.log("[CreatePostPage] Document written with ID:", docRef.id);
-
+      await addDoc(collection(db, "posts"), postToSave);
+      
       toast.success("Signalement publié avec succès!", { id: loadingToastId });
       navigate("/browse");
     } catch (error) {
-      console.error("[CreatePostPage] Error in handlePostSubmit:", error);
+      console.error("Error creating post:", error);
       toast.error("Erreur lors de la publication. Veuillez réessayer.", { id: loadingToastId });
     }
   };

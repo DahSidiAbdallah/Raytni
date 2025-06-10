@@ -41,7 +41,6 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("[CreatePostForm] handleSubmit triggered. formData:", formData);
     
     const dataForPage = {
       title: formData.title,
@@ -56,27 +55,23 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
       contactName: formData.contactName,
       contactPhone: formData.contactPhone,
     };
-    console.log("[CreatePostForm] About to call onSubmit with dataForPage:", dataForPage);
+    
     onSubmit(dataForPage);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
       
       setFormData({ 
         ...formData, 
         images: filesArray,
-        mainImageIndex: 0 // Default to first image when new files are selected
+        // Keep current mainImageIndex if it's valid for the new array, otherwise reset to 0
+        mainImageIndex: formData.mainImageIndex < filesArray.length ? formData.mainImageIndex : 0
       });
 
       // Generate previews
       const newPreviews: string[] = [];
-      setImagePreviews([]); // Clear old previews immediately
-
-      if (filesArray.length === 0) {
-        return;
-      }
       
       filesArray.forEach(file => {
         const reader = new FileReader();
@@ -88,37 +83,15 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
         };
         reader.readAsDataURL(file);
       });
+    } else {
+      // Clear images and previews if no files selected
+      setFormData({ ...formData, images: [], mainImageIndex: 0 });
+      setImagePreviews([]);
     }
   };
 
   const handleSetMainImage = (index: number) => {
-    console.log("Setting main image to index:", index);
     setFormData({ ...formData, mainImageIndex: index });
-  };
-
-  const removeImage = (index: number) => {
-    const newImages = [...formData.images];
-    newImages.splice(index, 1);
-    
-    const newPreviews = [...imagePreviews];
-    newPreviews.splice(index, 1);
-    
-    // Adjust mainImageIndex if needed
-    let newMainIndex = formData.mainImageIndex;
-    if (index === formData.mainImageIndex) {
-      // If we're removing the main image, set the first image as main
-      newMainIndex = newImages.length > 0 ? 0 : -1;
-    } else if (index < formData.mainImageIndex) {
-      // If we're removing an image before the main image, decrement the index
-      newMainIndex--;
-    }
-    
-    setFormData({
-      ...formData,
-      images: newImages,
-      mainImageIndex: newMainIndex
-    });
-    setImagePreviews(newPreviews);
   };
 
   return (
@@ -293,45 +266,33 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
               />
               
               {imagePreviews.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm text-gray-700 mb-2">
+                <>
+                  <p className="mt-4 text-sm text-gray-600">
                     {imagePreviews.length} photo(s) - Cliquez sur une image pour la définir comme principale
                   </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                     {imagePreviews.map((preview, index) => (
                       <div 
                         key={index} 
-                        className="relative aspect-square border rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                        className={`relative aspect-square border rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
+                          formData.mainImageIndex === index ? 'ring-2 ring-blue-500' : ''
+                        }`}
+                        onClick={() => handleSetMainImage(index)}
                       >
                         <img 
                           src={preview} 
                           alt={`Preview ${index + 1}`} 
                           className="absolute top-0 left-0 w-full h-full object-cover"
-                          onClick={() => handleSetMainImage(index)}
                         />
-                        
-                        {/* Main image indicator */}
                         {formData.mainImageIndex === index && (
-                          <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1">
+                          <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
                             <Check className="h-4 w-4" />
                           </div>
                         )}
-                        
-                        {/* Remove image button */}
-                        <button 
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeImage(index);
-                          }}
-                          className="absolute top-2 left-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
                       </div>
                     ))}
                   </div>
-                </div>
+                </>
               )}
             </div>
 

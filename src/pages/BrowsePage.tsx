@@ -21,8 +21,8 @@ interface DisplayPost {
   status: string;
   createdAt: string;
   imageUrl?: string;
-  mainImageUrl?: string;
   imageUrls?: string[];
+  mainImageUrl?: string;
   firestoreCreatedAt: Timestamp;
   subCategory?: string;
 }
@@ -38,11 +38,8 @@ const BrowsePage = () => {
     const q = query(postsCollection, orderBy("createdAt", "desc"));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      console.log("[BrowsePage] onSnapshot triggered. Docs count:", querySnapshot.docs.length);
       const fetchedPosts: DisplayPost[] = [];
-      
       querySnapshot.forEach((doc) => {
-        console.log("[BrowsePage] Post ID:", doc.id, "Data:", doc.data());
         const data = doc.data();
         const firestoreTimestamp = data.createdAt as Timestamp;
         
@@ -51,14 +48,11 @@ const BrowsePage = () => {
           const eventDate = new Date(data.dateTimeLostOrFound);
           if (!isNaN(eventDate.getTime())) {
             validDateTimeLostOrFoundISO = eventDate.toISOString();
-          } else {
-            console.warn(`[BrowsePage] Invalid dateTimeLostOrFound value: ${data.dateTimeLostOrFound} for post ID: ${doc.id}`);
           }
         }
         
         const createdAtISO = firestoreTimestamp ? firestoreTimestamp.toDate().toISOString() : new Date().toISOString();
-        const locationDisplay = data.locationName || "Lieu non spécifié";
-
+        
         const displayPost: DisplayPost = {
           id: doc.id, 
           title: data.title,
@@ -66,24 +60,23 @@ const BrowsePage = () => {
           category: data.category, 
           subCategory: data.subCategory, 
           type: data.category, 
-          location: locationDisplay, 
+          location: data.locationName || "Lieu non spécifié", 
           dateTime: validDateTimeLostOrFoundISO || createdAtISO, 
           createdAt: createdAtISO, 
           status: data.status,
-          imageUrl: data.imageUrl,
+          imageUrl: data.mainImageUrl || data.imageUrl, // Use mainImageUrl if available
+          imageUrls: data.imageUrls || [],
           mainImageUrl: data.mainImageUrl,
-          imageUrls: data.imageUrls,
           firestoreCreatedAt: firestoreTimestamp,
           contactName: data.contactName || "N/A", 
           contactPhone: data.contactPhone || "N/A", 
         };
         fetchedPosts.push(displayPost);
       });
-      
       setPosts(fetchedPosts);
       setIsLoading(false);
     }, (error) => {
-      console.error("[BrowsePage] Error fetching posts: ", error);
+      console.error("Error fetching posts:", error);
       setIsLoading(false);
     });
 
@@ -93,7 +86,7 @@ const BrowsePage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg\" text={t('loading.text')} />
+        <LoadingSpinner size="lg" text={t('loading.text')} />
       </div>
     );
   }
