@@ -53,6 +53,12 @@ const translations: Record<Language, Record<string, string>> = {
     'toast.success.desc': 'Votre signalement est maintenant visible par la communauté.',
     'toast.loading': 'Publication en cours...',
     'toast.error': 'Erreur lors de la publication',
+    'image.main': 'Image principale',
+    'image.select.main': 'Définir comme image principale',
+    'image.remove': 'Supprimer cette image',
+    'image.count': 'Image {current} sur {total}',
+    'image.upload.multiple': 'Vous pouvez télécharger plusieurs photos',
+    'image.main.info': 'Cliquez sur une image pour la définir comme principale',
 
     // SignInPage
     'page.signin.title': 'Se Connecter',
@@ -147,6 +153,12 @@ const translations: Record<Language, Record<string, string>> = {
     'toast.success.desc': 'بلاغك مرئي الآن للمجتمع.',
     'toast.loading': 'جاري النشر...',
     'toast.error': 'خطأ في النشر',
+    'image.main': 'الصورة الرئيسية',
+    'image.select.main': 'تعيين كصورة رئيسية',
+    'image.remove': 'إزالة هذه الصورة',
+    'image.count': 'صورة {current} من {total}',
+    'image.upload.multiple': 'يمكنك تحميل عدة صور',
+    'image.main.info': 'انقر على صورة لتعيينها كصورة رئيسية',
 
     // SignInPage
     'page.signin.title': 'تسجيل الدخول',

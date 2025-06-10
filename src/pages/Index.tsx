@@ -24,6 +24,8 @@ interface Post {
   status: string;
   createdAt: string;
   imageUrl?: string;
+  mainImageUrl?: string;
+  imageUrls?: string[];
 }
 
 const Index = () => {
@@ -58,6 +60,8 @@ const Index = () => {
             status: data.status || "lost",
             createdAt: firestoreTimestamp ? firestoreTimestamp.toDate().toISOString() : new Date().toISOString(),
             imageUrl: data.imageUrl || "",
+            mainImageUrl: data.mainImageUrl || "",
+            imageUrls: data.imageUrls || [],
           });
         });
         
@@ -87,7 +91,7 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg\" text={t('loading.text')} />
+        <LoadingSpinner size="lg" text={t('loading.text')} />
       </div>
     );
   }
@@ -147,6 +151,18 @@ const Index = () => {
                       {new Date(post.createdAt).toLocaleDateString("fr-FR")}
                     </span>
                   </div>
+                  
+                  {/* Display main image if available */}
+                  {(post.mainImageUrl || post.imageUrl || (post.imageUrls && post.imageUrls.length > 0)) && (
+                    <div className="mb-4 rounded-lg overflow-hidden h-40">
+                      <img 
+                        src={post.mainImageUrl || post.imageUrl || post.imageUrls![0]} 
+                        alt={post.title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  
                   <h3 className="font-bold text-gray-900 mb-3 text-lg">{post.title}</h3>
                   <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">{post.description}</p>
                   <p className="text-sm text-blue-600 font-medium bg-blue-50 p-2 rounded-lg">📍 {post.location}</p>

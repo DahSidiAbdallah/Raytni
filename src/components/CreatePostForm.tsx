@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, Phone, ImagePlus } from "lucide-react";
+import { MapPin, Calendar, Phone, ImagePlus, X, Check } from "lucide-react";
 import { type PostDataFromForm } from "../pages/CreatePostPage";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -26,6 +26,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     contactPhone: "",
     status: "lost" as 'lost' | 'found',
     images: [] as File[],
+    mainImageIndex: 0
   });
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -69,7 +70,8 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
       mainCategory: formData.type, 
       subCategory: formData.category,
       locationName: formData.location,
-      imageFile: formData.images.length > 0 ? formData.images[0] : null,
+      images: formData.images,
+      mainImageIndex: formData.mainImageIndex,
       status: formData.status,
       dateTimeLostOrFound: formData.dateTime || undefined,
       contactName: formData.contactName,
@@ -82,27 +84,59 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      setFormData({ ...formData, images: filesArray });
-
-      // Generate previews
-      const newPreviews: string[] = [];
-      setImagePreviews([]);
-
-      if (filesArray.length === 0) {
-        return;
-      }
       
+      // Update form data with new images
+      setFormData({ 
+        ...formData, 
+        images: [...formData.images, ...filesArray],
+        // If this is the first image being added, set it as main image
+        mainImageIndex: formData.images.length === 0 ? 0 : formData.mainImageIndex
+      });
+
+      // Generate previews for new images
       filesArray.forEach(file => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          newPreviews.push(reader.result as string);
-          if (newPreviews.length === filesArray.length) {
-            setImagePreviews(newPreviews);
-          }
+          setImagePreviews(prev => [...prev, reader.result as string]);
         };
         reader.readAsDataURL(file);
       });
     }
+  };
+
+  const removeImage = (index: number) => {
+    // Create a new array without the removed image
+    const newImages = [...formData.images];
+    newImages.splice(index, 1);
+    
+    // Create a new array without the removed preview
+    const newPreviews = [...imagePreviews];
+    newPreviews.splice(index, 1);
+    
+    // Update main image index if needed
+    let newMainImageIndex = formData.mainImageIndex;
+    if (index === formData.mainImageIndex) {
+      // If we removed the main image, set the first image as main (or -1 if no images left)
+      newMainImageIndex = newImages.length > 0 ? 0 : -1;
+    } else if (index < formData.mainImageIndex) {
+      // If we removed an image before the main image, decrement the index
+      newMainImageIndex--;
+    }
+    
+    // Update state
+    setFormData({
+      ...formData,
+      images: newImages,
+      mainImageIndex: newMainImageIndex
+    });
+    setImagePreviews(newPreviews);
+  };
+
+  const setMainImage = (index: number) => {
+    setFormData({
+      ...formData,
+      mainImageIndex: index
+    });
   };
 
   return (
@@ -302,26 +336,58 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 <ImagePlus className="h-4 w-4 inline mr-1" />
                 Photos (optionnel)
               </label>
+              
+              {/* Image upload input */}
               <Input
                 type="file"
                 accept="image/*"
+                multiple
                 onChange={handleImageChange}
                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               />
+              
+              {/* Image preview section */}
               {imagePreviews.length > 0 && (
-                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                  {imagePreviews.map((preview, index) => (
-                    <div 
-                      key={index} 
-                      className="relative aspect-square border rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                    >
-                      <img 
-                        src={preview} 
-                        alt={`Preview ${index + 1}`} 
-                        className="absolute top-0 left-0 w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-700 mb-2">
+                    {formData.images.length} photo(s) - Cliquez sur une image pour la définir comme principale
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div 
+                        key={index} 
+                        className={`relative aspect-square border-2 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
+                          index === formData.mainImageIndex ? 'border-blue-500' : 'border-gray-200'
+                        }`}
+                        onClick={() => setMainImage(index)}
+                      >
+                        <img 
+                          src={preview} 
+                          alt={`Preview ${index + 1}`} 
+                          className="absolute top-0 left-0 w-full h-full object-cover"
+                        />
+                        
+                        {/* Main image indicator */}
+                        {index === formData.mainImageIndex && (
+                          <div className="absolute top-2 right-2 bg-blue-500 text-white p-1 rounded-full">
+                            <Check className="h-4 w-4" />
+                          </div>
+                        )}
+                        
+                        {/* Remove image button */}
+                        <button
+                          type="button"
+                          className="absolute top-2 left-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeImage(index);
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

@@ -13,7 +13,8 @@ export interface PostDataFromForm {
   mainCategory: string;
   subCategory: string;
   locationName: string;
-  imageFile?: File | null;
+  images: File[];
+  mainImageIndex: number;
   status: 'lost' | 'found';
   dateTimeLostOrFound?: string;
   contactName: string;
@@ -28,17 +29,19 @@ const CreatePostPage = () => {
     const loadingToastId = toast.loading(t('toast.loading') || "Envoi en cours...");
 
     try {
-      let imageUrl = '';
-      if (dataFromForm.imageFile) {
-        // Create a unique path for the image
-        const imagePath = `posts_images/${Date.now()}-${dataFromForm.imageFile.name}`;
-        const imageRef = ref(storage, imagePath);
-        
-        // Upload the image
-        await uploadBytes(imageRef, dataFromForm.imageFile);
-        
-        // Get the download URL
-        imageUrl = await getDownloadURL(imageRef);
+      // Upload all images and get their URLs
+      const imageUrls: string[] = [];
+      
+      if (dataFromForm.images.length > 0) {
+        for (let i = 0; i < dataFromForm.images.length; i++) {
+          const file = dataFromForm.images[i];
+          const imagePath = `posts_images/${Date.now()}-${i}-${file.name}`;
+          const imageRef = ref(storage, imagePath);
+          
+          await uploadBytes(imageRef, file);
+          const url = await getDownloadURL(imageRef);
+          imageUrls.push(url);
+        }
       }
 
       // Prepare data for Firestore
@@ -48,7 +51,8 @@ const CreatePostPage = () => {
         category: dataFromForm.mainCategory,
         subCategory: dataFromForm.subCategory,
         locationName: dataFromForm.locationName,
-        imageUrl: imageUrl,
+        imageUrls: imageUrls, // All image URLs
+        mainImageUrl: imageUrls.length > 0 ? imageUrls[dataFromForm.mainImageIndex] : '', // Main image URL
         status: dataFromForm.status,
         dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound || null,
         contactName: dataFromForm.contactName,

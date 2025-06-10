@@ -22,6 +22,8 @@ interface DisplayPost {
   status: string;
   createdAt: string;
   imageUrl?: string;
+  mainImageUrl?: string;
+  imageUrls?: string[];
   firestoreCreatedAt: Timestamp;
   subCategory?: string;
 }
@@ -66,6 +68,8 @@ const BrowsePage = () => {
           createdAt: createdAtISO, 
           status: data.status || "lost",
           imageUrl: data.imageUrl || "",
+          mainImageUrl: data.mainImageUrl || "",
+          imageUrls: data.imageUrls || [],
           firestoreCreatedAt: firestoreTimestamp,
           contactName: data.contactName || "N/A", 
           contactPhone: data.contactPhone || "N/A", 
@@ -98,7 +102,7 @@ const BrowsePage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg\" text={t('loading.text')} />
+        <LoadingSpinner size="lg" text={t('loading.text')} />
       </div>
     );
   }
