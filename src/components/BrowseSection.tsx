@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PostCard from "./PostCard";
+import { getPosts, PostFilter } from "@/services/postService";
 
 interface Post {
   id: string;
@@ -18,6 +19,7 @@ interface Post {
   contactPhone: string;
   status: string;
   createdAt: string;
+  imageUrl?: string;
 }
 
 interface BrowseSectionProps {
@@ -25,27 +27,93 @@ interface BrowseSectionProps {
   onBack: () => void;
 }
 
-const BrowseSection = ({ posts, onBack }: BrowseSectionProps) => {
+const BrowseSection = ({ posts: initialPosts, onBack }: BrowseSectionProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterLocation, setFilterLocation] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>(initialPosts);
+  const [isLoading, setIsLoading] = useState(false);
 
   const mauritanianCities = [
     "Nouakchott", "Nouadhibou", "Kaédi", "Zouérat", "Rosso", "Atar", 
     "Aleg", "Selibaby", "Boutilimit", "Kiffa", "Néma", "Akjoujt"
   ];
 
-  const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || post.type === filterType;
-    const matchesStatus = filterStatus === "all" || post.status === filterStatus;
-    const matchesLocation = filterLocation === "all" || post.location === filterLocation;
-    
-    return matchesSearch && matchesType && matchesStatus && matchesLocation;
-  });
+  // Apply filters whenever filter state changes
+  useEffect(() => {
+    const applyFilters = async () => {
+      // If no filters are active, just use the initial posts
+      if (!hasActiveFilters) {
+        setFilteredPosts(initialPosts);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        // Build filter object for the service
+        const filters: PostFilter = {};
+        
+        if (filterType !== "all") {
+          filters.category = filterType;
+        }
+        
+        if (filterStatus !== "all") {
+          filters.status = filterStatus as 'lost' | 'found';
+        }
+        
+        if (filterLocation !== "all") {
+          filters.locationName = filterLocation;
+        }
+        
+        if (searchTerm) {
+          filters.searchTerm = searchTerm;
+        }
+
+        // Use the service to get filtered posts
+        const posts = await getPosts(filters);
+        
+        // Convert to the format expected by the component
+        const displayPosts = posts.map(post => ({
+          id: post.id,
+          type: post.category,
+          category: post.subCategory,
+          title: post.title,
+          description: post.description,
+          location: post.locationName,
+          dateTime: post.dateTimeLostOrFound || post.createdAt.toDate().toISOString(),
+          contactName: post.contactName,
+          contactPhone: post.contactPhone,
+          status: post.status,
+          createdAt: post.createdAt.toDate().toISOString(),
+          imageUrl: post.imageUrl
+        }));
+        
+        setFilteredPosts(displayPosts);
+      } catch (error) {
+        console.error("Error applying filters:", error);
+        // If there's an error, fall back to client-side filtering
+        const filtered = initialPosts.filter(post => {
+          const matchesSearch = searchTerm ? 
+            post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.description.toLowerCase().includes(searchTerm.toLowerCase()) : 
+            true;
+          const matchesType = filterType === "all" || post.type === filterType;
+          const matchesStatus = filterStatus === "all" || post.status === filterStatus;
+          const matchesLocation = filterLocation === "all" || post.location === filterLocation;
+          
+          return matchesSearch && matchesType && matchesStatus && matchesLocation;
+        });
+        
+        setFilteredPosts(filtered);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    applyFilters();
+  }, [initialPosts, searchTerm, filterType, filterStatus, filterLocation]);
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -168,8 +236,15 @@ const BrowseSection = ({ posts, onBack }: BrowseSectionProps) => {
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      )}
+
       {/* Posts Grid */}
-      {filteredPosts.length === 0 ? (
+      {!isLoading && filteredPosts.length === 0 ? (
         <div className="text-center py-16 animate-fade-in">
           <div className="text-gray-300 text-8xl mb-6">🔍</div>
           <h3 className="text-2xl font-semibold text-gray-900 mb-3">Aucun signalement trouvé</h3>

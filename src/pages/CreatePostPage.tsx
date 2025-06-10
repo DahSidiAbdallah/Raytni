@@ -1,70 +1,53 @@
 import CreatePostForm from "@/components/CreatePostForm";
 import { useNavigate } from "react-router-dom";
-import { db, storage } from "@/lib/firebase"; // auth removed
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"; // Firestore imports
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Storage imports
-import { useLanguage } from "@/contexts/LanguageContext"; // For alert messages
-import toast from 'react-hot-toast'; // Import toast
+import { useLanguage } from "@/contexts/LanguageContext";
+import toast from 'react-hot-toast';
+import { createPost, PostInput } from "@/services/postService";
 
-// Updated interface to reflect data from CreatePostForm and what's needed for Firestore
 // Exporting for use in CreatePostForm.tsx
 export interface PostDataFromForm {
   title: string;
   description: string;
-  mainCategory: string; // e.g., "personne", "objet" - maps to 'category' in Firestore
-  subCategory: string;  // e.g., "Enfant", "Téléphone" - maps to 'subCategory' in Firestore
-  locationName: string; // e.g., "Nouakchott" - maps to 'locationName' in Firestore
-  imageFile?: File | null; 
+  mainCategory: string;
+  subCategory: string;
+  locationName: string;
+  imageFile?: File | null;
   status: 'lost' | 'found';
-  dateTimeLostOrFound?: string; 
-  contactName: string; // Added
-  contactPhone: string; // Added
+  dateTimeLostOrFound?: string;
+  contactName: string;
+  contactPhone: string;
 }
 
 const CreatePostPage = () => {
   const navigate = useNavigate();
-  // const { t } = useLanguage(); // Temporarily comment out for debugging
+  const { t } = useLanguage();
 
   const handlePostSubmit = async (dataFromForm: PostDataFromForm) => {
-    // VERY FIRST LINE: Simplest possible log
-    console.log("!!! [CreatePostPage] handlePostSubmit ENTERED !!! Data:", dataFromForm);
-    alert("CreatePostPage handlePostSubmit was called!"); // Use a blocking alert for absolute certainty
-
-    // const loadingToastId = toast.loading(t('page.createpost.toast.loading')); // Temporarily comment out
-    const loadingToastId = toast.loading("Submitting..."); // Use plain string for now
+    const loadingToastId = toast.loading(t('page.createpost.toast.loading') || "Création du signalement...");
 
     try {
-      let imageUrl = '';
-      if (dataFromForm.imageFile) {
-        const imagePath = `posts_images/${Date.now()}/${dataFromForm.imageFile.name}`;
-        const imageRef = ref(storage, imagePath);
-        await uploadBytes(imageRef, dataFromForm.imageFile);
-        imageUrl = await getDownloadURL(imageRef);
-      }
-
-      // Data to be saved in Firestore
-      const postToSave = {
+      // Convert the form data to the format expected by the service
+      const postData: PostInput = {
         title: dataFromForm.title,
         description: dataFromForm.description,
-        category: dataFromForm.mainCategory, // Main category (e.g., objet, personne)
-        subCategory: dataFromForm.subCategory, // Sub-category (e.g., Téléphone, Enfant)
-        locationName: dataFromForm.locationName, // City name
-        imageUrl: imageUrl, 
-        status: dataFromForm.status, // 'lost' or 'found'
-        dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound || null, // Optional date
-        contactName: dataFromForm.contactName, // Added
-        contactPhone: dataFromForm.contactPhone, // Added
-        createdAt: serverTimestamp(),
+        mainCategory: dataFromForm.mainCategory,
+        subCategory: dataFromForm.subCategory,
+        locationName: dataFromForm.locationName,
+        imageFile: dataFromForm.imageFile,
+        status: dataFromForm.status,
+        dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound,
+        contactName: dataFromForm.contactName,
+        contactPhone: dataFromForm.contactPhone,
       };
 
-      await addDoc(collection(db, "posts"), postToSave);
-      // toast.success(t('page.createpost.toast.success'), { id: loadingToastId }); // Temporarily comment out
-      toast.success("Post created!", { id: loadingToastId }); // Use plain string
-      navigate("/browse"); 
+      // Create the post using the service
+      await createPost(postData);
+      
+      toast.success(t('toast.success') || "Signalement publié avec succès!", { id: loadingToastId });
+      navigate("/browse");
     } catch (error) {
-      console.error("[CreatePostPage] Error in handlePostSubmit logic:", error);
-      // toast.error(t('page.createpost.toast.error.generic'), { id: loadingToastId }); // Temporarily comment out
-      toast.error("Error creating post.", { id: loadingToastId }); // Use plain string
+      console.error("Error creating post:", error);
+      toast.error(t('page.createpost.toast.error.generic') || "Erreur lors de la création du signalement.", { id: loadingToastId });
     }
   };
 
@@ -78,4 +61,4 @@ const CreatePostPage = () => {
   );
 };
 
-export default CreatePostPage; 
+export default CreatePostPage;

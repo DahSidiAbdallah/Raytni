@@ -1,92 +1,72 @@
 import { useState, useEffect } from 'react';
 import BrowseSection from "@/components/BrowseSection";
-import Header from "@/components/Header"; // Assuming you want Header on this page
-import Footer from "@/components/Footer"; // Assuming you want Footer on this page
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { db } from "@/lib/firebase"; // Firebase import
-import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore"; // Firestore imports
+import { getPosts, Post, PostFilter } from "@/services/postService";
 
 // This interface defines the structure of post objects after processing Firestore data
 // for use in this component and passed to BrowseSection.
 interface DisplayPost {
-  id: string; // Firestore ID, now directly used
-  type: string; // Mapped from category
-  category: string; // Original category
+  id: string;
+  type: string;
+  category: string;
   title: string;
   description: string;
-  location: string; // This will be locationName from Firestore
-  dateTime: string; // Mapped from createdAt
-  contactName: string; // Placeholder
-  contactPhone: string; // Placeholder
+  location: string;
+  dateTime: string;
+  contactName: string;
+  contactPhone: string;
   status: string;
-  createdAt: string; // String version of original createdAt 
-  // Fields from Firestore that might not be directly used by BrowseSection but useful here
-  // userId: string; // Removed userId as it's no longer in Firestore post documents
+  createdAt: string;
   imageUrl?: string;
-  firestoreCreatedAt: Timestamp;
-  subCategory?: string;
 }
 
 const BrowsePage = () => {
   const { t } = useLanguage();
-  const [posts, setPosts] = useState<DisplayPost[]>([]); // Use DisplayPost
+  const [posts, setPosts] = useState<DisplayPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    const postsCollection = collection(db, "posts");
-    const q = query(postsCollection, orderBy("createdAt", "desc"));
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      console.log("[BrowsePage] onSnapshot triggered. Docs count:", querySnapshot.docs.length);
-      const fetchedPosts: DisplayPost[] = [];
-      querySnapshot.forEach((doc) => {
-        console.log("[BrowsePage] Post ID:", doc.id, "Data:", doc.data());
-        const data = doc.data();
-        const firestoreTimestamp = data.createdAt as Timestamp;
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedPosts = await getPosts();
         
-        let validDateTimeLostOrFoundISO: string | null = null;
-        if (data.dateTimeLostOrFound) {
-          const eventDate = new Date(data.dateTimeLostOrFound);
-          if (!isNaN(eventDate.getTime())) {
-            validDateTimeLostOrFoundISO = eventDate.toISOString();
-          } else {
-            console.warn(`[BrowsePage] Invalid dateTimeLostOrFound value: ${data.dateTimeLostOrFound} for post ID: ${doc.id}`);
-          }
-        }
+        // Convert the posts from the service format to the display format
+        const displayPosts = fetchedPosts.map(post => mapToDisplayPost(post));
         
-        const createdAtISO = firestoreTimestamp ? firestoreTimestamp.toDate().toISOString() : new Date().toISOString();
-        
-        const locationDisplay = data.locationName || "Lieu non spécifié";
+        setPosts(displayPosts);
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+        setError("Une erreur est survenue lors du chargement des signalements.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-        const displayPost: DisplayPost = {
-          id: doc.id, 
-          title: data.title,
-          description: data.description,
-          category: data.category, 
-          subCategory: data.subCategory, 
-          type: data.category, 
-          location: locationDisplay, 
-          dateTime: validDateTimeLostOrFoundISO || createdAtISO, 
-          createdAt: createdAtISO, 
-          status: data.status,
-          imageUrl: data.imageUrl,
-          firestoreCreatedAt: firestoreTimestamp,
-          contactName: data.contactName || "N/A", 
-          contactPhone: data.contactPhone || "N/A", 
-        };
-        fetchedPosts.push(displayPost);
-      });
-      setPosts(fetchedPosts);
-      setIsLoading(false);
-    }, (error) => {
-      console.error("[BrowsePage] Error fetching posts: ", error);
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
+    fetchPosts();
   }, []);
+
+  // Function to map a Post from the service to a DisplayPost for the UI
+  const mapToDisplayPost = (post: Post): DisplayPost => {
+    return {
+      id: post.id,
+      type: post.category, // Map category to type for BrowseSection
+      category: post.subCategory,
+      title: post.title,
+      description: post.description,
+      location: post.locationName,
+      dateTime: post.dateTimeLostOrFound || post.createdAt.toDate().toISOString(),
+      contactName: post.contactName,
+      contactPhone: post.contactPhone,
+      status: post.status,
+      createdAt: post.createdAt.toDate().toISOString(),
+      imageUrl: post.imageUrl
+    };
+  };
 
   if (isLoading) {
     return (
@@ -96,15 +76,36 @@ const BrowsePage = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Erreur</h2>
+          <p className="text-gray-700">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onCreatePost={() => {}} onViewBrowse={() => {}} onViewHome={() => {}} /> {/* Adjust props as needed */}
+      <Header 
+        onCreatePost={() => {}} 
+        onViewBrowse={() => {}} 
+        onViewHome={() => {}} 
+      />
       <main className="flex-grow container mx-auto px-4 py-8">
-        <BrowseSection posts={posts} onBack={() => window.history.back()} /> {/* Or navigate to '/' */}
+        <BrowseSection posts={posts} onBack={() => window.history.back()} />
       </main>
       <Footer />
     </div>
   );
 };
 
-export default BrowsePage; 
+export default BrowsePage;
