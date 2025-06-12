@@ -24,22 +24,6 @@ export interface PostDataFromForm {
 const CreatePostPage = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-<<<<<<< HEAD
-
-  const handleCreatePost = () => {
-    navigate('/create-post');
-  };
-
-  const handleViewBrowse = () => {
-    navigate('/browse');
-  };
-
-  const handleViewHome = () => {
-    navigate('/');
-  };
-=======
-  const { t } = useLanguage();
->>>>>>> 8f752e533d191a0b9fc83a15d33957290cd7ab5b
 
   const handlePostSubmit = async (dataFromForm: PostDataFromForm) => {
     const loadingToastId = toast.loading("Publication en cours...");
