@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import BrowseSection from "@/components/BrowseSection";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { db } from "@/lib/firebase"; // Firebase import
-import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore"; // Firestore imports
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { db } from "@/lib/firebase";
+import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
+import MainLayout from "@/components/MainLayout";
 
 // This interface defines the structure of post objects after processing Firestore data
 interface DisplayPost {
@@ -30,21 +28,8 @@ interface DisplayPost {
 
 const BrowsePage = () => {
   const { t } = useLanguage();
-  const navigate = useNavigate();
   const [posts, setPosts] = useState<DisplayPost[]>([]); // Use DisplayPost
   const [isLoading, setIsLoading] = useState(true);
-
-  const handleCreatePost = () => {
-    navigate('/create-post');
-  };
-
-  const handleViewBrowse = () => {
-    navigate('/browse');
-  };
-
-  const handleViewHome = () => {
-    navigate('/');
-  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -100,23 +85,15 @@ const BrowsePage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg\" text={t('loading.text')} />
+        <LoadingSpinner size="lg" text={t('loading.text')} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header 
-        onCreatePost={handleCreatePost}
-        onViewBrowse={handleViewBrowse}
-        onViewHome={handleViewHome}
-      />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <BrowseSection posts={posts} onBack={() => window.history.back()} />
-      </main>
-      <Footer />
-    </div>
+    <MainLayout>
+      <BrowseSection posts={posts} onBack={() => window.history.back()} />
+    </MainLayout>
   );
 };
 

@@ -5,6 +5,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useLanguage } from "@/contexts/LanguageContext";
 import toast from 'react-hot-toast';
+import MainLayout from "@/components/MainLayout";
 
 // Updated interface to reflect data from CreatePostForm and what's needed for Firestore
 export interface PostDataFromForm {
@@ -78,17 +79,9 @@ const CreatePostPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* <Header
-        onCreatePost={handleCreatePost}
-        onViewBrowse={handleViewBrowse}
-        onViewHome={handleViewHome}
-      /> */}
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <CreatePostForm onBack={() => navigate('/')} onSubmit={handlePostSubmit} />
-      </main>
-      {/* <Footer /> */}
-    </div>
+    <MainLayout>
+      <CreatePostForm onBack={() => navigate('/')} onSubmit={handlePostSubmit} />
+    </MainLayout>
   );
 };
 
