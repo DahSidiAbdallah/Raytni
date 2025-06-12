@@ -26,7 +26,7 @@ const CreatePostPage = () => {
   const navigate = useNavigate();
 
   const handlePostSubmit = async (dataFromForm: PostDataFromForm) => {
-    const loadingToastId = toast.loading("Publication en cours...");
+    const loadingToastId = toast.loading(t('page.createpost.toast.loading'));
 
     try {
       // Upload all images and get their URLs
@@ -37,16 +37,21 @@ const CreatePostPage = () => {
         // Process each image
         for (let i = 0; i < dataFromForm.imageFiles.length; i++) {
           const file = dataFromForm.imageFiles[i];
-          const imagePath = `posts_images/${Date.now()}_${i}_${file.name}`;
+          const imagePath = `posts_images/${Date.now()}_${i}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
           const imageRef = ref(storage, imagePath);
           
-          await uploadBytes(imageRef, file);
-          const url = await getDownloadURL(imageRef);
-          imageUrls.push(url);
-          
-          // Set the main image URL
-          if (i === dataFromForm.mainImageIndex) {
-            mainImageUrl = url;
+          try {
+            await uploadBytes(imageRef, file);
+            const url = await getDownloadURL(imageRef);
+            imageUrls.push(url);
+            
+            // If this is the main image, store its URL separately
+            if (i === dataFromForm.mainImageIndex) {
+              mainImageUrl = url;
+            }
+          } catch (uploadError) {
+            console.error(`Error uploading image ${i}:`, uploadError);
+            toast.error(t('page.createpost.toast.imageUploadError'));
           }
         }
       }
@@ -58,36 +63,34 @@ const CreatePostPage = () => {
         category: dataFromForm.mainCategory,
         subCategory: dataFromForm.subCategory,
         locationName: dataFromForm.locationName,
+        imageUrl: mainImageUrl, // Main image URL
         imageUrls: imageUrls, // All image URLs
-        mainImageUrl: mainImageUrl, // Main image URL
         status: dataFromForm.status,
         dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound || null,
         contactName: dataFromForm.contactName,
         contactPhone: dataFromForm.contactPhone,
-        createdAt: serverTimestamp(),
+        createdAt: serverTimestamp()
       };
 
-      await addDoc(collection(db, "posts"), postToSave);
+      const docRef = await addDoc(collection(db, "posts"), postToSave);
+      console.log("Document written with ID: ", docRef.id);
       
-      toast.success("Signalement publié avec succès!", { id: loadingToastId });
-      navigate("/browse");
+      toast.success(t('page.createpost.toast.success'));
+      navigate('/browse');
     } catch (error) {
       console.error("Error creating post:", error);
-      toast.error("Erreur lors de la publication. Veuillez réessayer.", { id: loadingToastId });
+      toast.error(t('page.createpost.toast.error'));
+    } finally {
+      toast.dismiss(loadingToastId);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* <Header
-        onCreatePost={handleCreatePost}
-        onViewBrowse={handleViewBrowse}
-        onViewHome={handleViewHome}
-      /> */}
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <CreatePostForm onBack={() => navigate('/')} onSubmit={handlePostSubmit} />
-      </main>
-      {/* <Footer /> */}
+    <div className="container mx-auto py-8">
+      <CreatePostForm 
+        onBack={() => navigate(-1)} 
+        onSubmit={handlePostSubmit} 
+      />
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Menu, X, Search as SearchIcon, Moon, Sun, Languages, Home, ListChecks, PlusCircle, LogIn, UserPlus, Shield } from 'lucide-react';
@@ -9,9 +8,9 @@ import Logo from '/logo.png';
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 
 interface HeaderProps {
-  onCreatePost: () => void;
-  onViewBrowse: () => void;
-  onViewHome: () => void;
+  onCreatePost?: () => void;
+  onViewBrowse?: () => void;
+  onViewHome?: () => void;
 }
 
 const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
@@ -28,87 +27,58 @@ const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
     }
   };
 
-  return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-              <img src={Logo} alt="Raytni Logo" className="h-12 w-auto" />
-            </Link>
-          </div>
+  const handleCreatePost = () => {
+    if (onCreatePost) {
+      onCreatePost();
+    } else {
+      navigate('/create-post');
+    }
+  };
 
-          <div className="hidden md:flex items-center space-x-6">
-            <nav className="space-x-4">
-              <Button variant="ghost" onClick={onViewHome} className="text-gray-700 hover:text-indigo-600"><Home className="mr-2 h-5 w-5"/>{t('nav.home')}</Button>
-              <Button variant="ghost" onClick={onViewBrowse} className="text-gray-700 hover:text-indigo-600"><ListChecks className="mr-2 h-5 w-5"/>{t('nav.browse')}</Button>
-              <Button variant="ghost" onClick={onCreatePost} className="text-gray-700 hover:text-indigo-600"><PlusCircle className="mr-2 h-5 w-5"/>{t('nav.report')}</Button>
-              <Button variant="ghost" onClick={() => navigate('/police')} className="text-gray-700 hover:text-indigo-600"><Shield className="mr-2 h-5 w-5"/>{t('nav.police')}</Button>
+  const handleViewBrowse = () => {
+    if (onViewBrowse) {
+      onViewBrowse();
+    } else {
+      navigate('/browse');
+    }
+  };
+
+  const handleViewHome = () => {
+    if (onViewHome) {
+      onViewHome();
+    } else {
+      navigate('/');
+    }
+  };
+
+  return (
+    <header className="bg-white shadow-lg border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 cursor-pointer" onClick={handleViewHome}>
+              <img className="h-8 w-auto" src={Logo} alt="Logo" />
+            </div>
+            <nav className="hidden md:ml-8 md:flex space-x-4">
+              <Button variant="ghost" onClick={handleViewHome} className="text-gray-700 hover:text-blue-600">
+                <Home className="mr-2 h-5 w-5"/>{t('nav.home')}
+              </Button>
+              <Button variant="ghost" onClick={handleViewBrowse} className="text-gray-700 hover:text-blue-600">
+                <ListChecks className="mr-2 h-5 w-5"/>{t('nav.browse')}
+              </Button>
+              <Button variant="ghost" onClick={handleCreatePost} className="text-gray-700 hover:text-blue-600">
+                <PlusCircle className="mr-2 h-5 w-5"/>{t('nav.report')}
+              </Button>
+              <Button variant="ghost" onClick={() => navigate('/police')} className="text-gray-700 hover:text-blue-600">
+                <Shield className="mr-2 h-5 w-5"/>{t('nav.police')}
+              </Button>
             </nav>
           </div>
 
-          <div className="hidden md:flex items-center space-x-3">
-    
-            <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
-              <SelectTrigger className="w-auto text-gray-700 hover:text-indigo-600 border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                <Languages className="h-5 w-5" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="ar">العربية</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="md:hidden flex items-center">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-gray-700 hover:text-indigo-600">
-                  {isMobileMenuOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-6">
-                <nav className="flex flex-col space-y-4">
-                  <SheetClose asChild>
-                    <Button variant="ghost" onClick={onViewHome} className="justify-start text-lg hover:text-indigo-600"><Home className="mr-3 h-6 w-6"/>{t('nav.home')}</Button>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Button variant="ghost" onClick={onViewBrowse} className="justify-start text-lg hover:text-indigo-600"><ListChecks className="mr-3 h-6 w-6"/>{t('nav.browse')}</Button>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Button variant="ghost" onClick={onCreatePost} className="justify-start text-lg hover:text-indigo-600"><PlusCircle className="mr-3 h-6 w-6"/>{t('nav.report')}</Button>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Button variant="ghost" onClick={() => { navigate('/police'); setIsMobileMenuOpen(false); }} className="justify-start text-lg hover:text-indigo-600"><Shield className="mr-3 h-6 w-6"/>{t('nav.police')}</Button>
-                  </SheetClose>
-                  <hr className="my-4"/>
-                  <SheetClose asChild>
-                    <Button variant="outline" onClick={() => navigate('/signin')} className="justify-start text-lg text-indigo-600 border-indigo-500">
-                       <LogIn className="mr-3 h-6 w-6" /> {t('auth.signIn')}
-                    </Button>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Button onClick={() => navigate('/signup')} className="justify-start text-lg bg-indigo-600 hover:bg-indigo-700 text-white">
-                      <UserPlus className="mr-3 h-6 w-6" /> {t('auth.signUp')}
-                    </Button>
-                  </SheetClose>
-                  <hr className="my-4"/>
-                  <div className="pt-2">
-                    <p className="text-sm font-medium text-gray-500 mb-2">{t('settings.language')}</p>
-                    <Select value={language} onValueChange={(newLang) => { setLanguage(newLang as Language); setIsMobileMenuOpen(false); }}>
-                        <SelectTrigger className="w-full focus:ring-indigo-500 focus:border-indigo-500">
-                            <Languages className="mr-2 h-5 w-5" /> 
-                            <span>{language === 'fr' ? 'Français' : 'العربية'}</span>
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="fr">Français</SelectItem>
-                            <SelectItem value="ar">العربية</SelectItem>
-                        </SelectContent>
-                    </Select>
-                  </div>
-                </nav>
-              </SheetContent>
-            </Sheet>
+          <div className="md:hidden">
+            <Button variant="ghost" className="p-2">
+              <Menu className="h-6 w-6" />
+            </Button>
           </div>
         </div>
       </div>
@@ -116,4 +86,4 @@ const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
   );
 };
 
-export default Header; 
+export default Header;

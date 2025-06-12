@@ -1,13 +1,9 @@
 import React, { ReactNode } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 
-interface MainLayoutProps {
-  children: ReactNode;
-}
-
-const MainLayout = ({ children }: MainLayoutProps) => {
+const MainLayout = () => {
   const navigate = useNavigate();
 
   const handleCreatePost = () => {
@@ -33,11 +29,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         onViewHome={handleViewHome}
       />
       <main className="flex-grow container mx-auto px-4 py-8">
-        {children}
+        <Outlet />
       </main>
       <Footer />
     </div>
   );
 };
 
-export default MainLayout; 
+export default MainLayout;
