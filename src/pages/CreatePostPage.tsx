@@ -22,8 +22,20 @@ export interface PostDataFromForm {
 }
 
 const CreatePostPage = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
-  // const { t } = useLanguage(); // Temporarily comment out for debugging
+
+  const handleCreatePost = () => {
+    navigate('/create-post');
+  };
+
+  const handleViewBrowse = () => {
+    navigate('/browse');
+  };
+
+  const handleViewHome = () => {
+    navigate('/');
+  };
 
   const handlePostSubmit = async (dataFromForm: PostDataFromForm) => {
     // VERY FIRST LINE: Simplest possible log
@@ -69,13 +81,18 @@ const CreatePostPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <CreatePostForm 
-        onBack={() => navigate(-1)} 
-        onSubmit={handlePostSubmit} 
-      />
+    <div className="min-h-screen flex flex-col">
+      {/* <Header
+        onCreatePost={handleCreatePost}
+        onViewBrowse={handleViewBrowse}
+        onViewHome={handleViewHome}
+      /> */}
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <CreatePostForm onBack={() => navigate('/')} onSubmit={handlePostSubmit} />
+      </main>
+      {/* <Footer /> */}
     </div>
   );
 };
 
-export default CreatePostPage; 
+export default CreatePostPage;

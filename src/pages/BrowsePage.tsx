@@ -6,6 +6,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { db } from "@/lib/firebase"; // Firebase import
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore"; // Firestore imports
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 // This interface defines the structure of post objects after processing Firestore data
 // for use in this component and passed to BrowseSection.
@@ -30,8 +31,21 @@ interface DisplayPost {
 
 const BrowsePage = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<DisplayPost[]>([]); // Use DisplayPost
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleCreatePost = () => {
+    navigate('/create-post');
+  };
+
+  const handleViewBrowse = () => {
+    navigate('/browse');
+  };
+
+  const handleViewHome = () => {
+    navigate('/');
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -98,7 +112,11 @@ const BrowsePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onCreatePost={() => {}} onViewBrowse={() => {}} onViewHome={() => {}} /> {/* Adjust props as needed */}
+      <Header 
+        onCreatePost={handleCreatePost}
+        onViewBrowse={handleViewBrowse}
+        onViewHome={handleViewHome}
+      />
       <main className="flex-grow container mx-auto px-4 py-8">
         <BrowseSection posts={posts} onBack={() => window.history.back()} /> {/* Or navigate to '/' */}
       </main>
@@ -107,4 +125,4 @@ const BrowsePage = () => {
   );
 };
 
-export default BrowsePage; 
+export default BrowsePage;
