@@ -4,14 +4,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useLanguage } from "@/contexts/LanguageContext";
-<<<<<<< HEAD
 import { db } from "@/lib/firebase"; // Firebase import
 import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore"; // Firestore imports
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-=======
-import { db } from "@/lib/firebase";
-import { collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
->>>>>>> 8f752e533d191a0b9fc83a15d33957290cd7ab5b
 
 // This interface defines the structure of post objects after processing Firestore data
 interface DisplayPost {
@@ -35,12 +30,8 @@ interface DisplayPost {
 
 const BrowsePage = () => {
   const { t } = useLanguage();
-<<<<<<< HEAD
   const navigate = useNavigate();
   const [posts, setPosts] = useState<DisplayPost[]>([]); // Use DisplayPost
-=======
-  const [posts, setPosts] = useState<DisplayPost[]>([]);
->>>>>>> 8f752e533d191a0b9fc83a15d33957290cd7ab5b
   const [isLoading, setIsLoading] = useState(true);
 
   const handleCreatePost = () => {
@@ -116,15 +107,11 @@ const BrowsePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-<<<<<<< HEAD
       <Header 
         onCreatePost={handleCreatePost}
         onViewBrowse={handleViewBrowse}
         onViewHome={handleViewHome}
       />
-=======
-      <Header onCreatePost={() => {}} onViewBrowse={() => {}} onViewHome={() => {}} />
->>>>>>> 8f752e533d191a0b9fc83a15d33957290cd7ab5b
       <main className="flex-grow container mx-auto px-4 py-8">
         <BrowseSection posts={posts} onBack={() => window.history.back()} />
       </main>
