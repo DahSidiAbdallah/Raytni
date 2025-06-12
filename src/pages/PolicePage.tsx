@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Shield, MapPin, Navigation, AlertTriangle, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import MainLayout from '@/components/MainLayout';
 
 interface Commissariat {
   id: string;
@@ -139,86 +140,88 @@ const PolicePage = () => {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-6">
-        <Link to="/" className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 ease-in-out">
-          {t('page.police.backLink')}
-        </Link>
-      </div>
-      
-      <Card className="shadow-lg mb-8">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
-            <Shield className="h-8 w-8 mr-3 text-indigo-600" />
-            {t('page.police.title')}
-          </CardTitle>
-          
-          <Button 
-            onClick={toggleSortByProximity}
-            variant={sortByProximity ? "default" : "outline"}
-            disabled={isLoadingLocation}
-            className="whitespace-nowrap"
-          >
-            {isLoadingLocation ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('page.police.loadingLocation')}
-              </>
-            ) : (
-              sortByProximity ? "Trier par nom" : "Trier par proximité"
-            )}
-          </Button>
-        </CardHeader>
+    <MainLayout>
+      <div className="container mx-auto py-8 px-4">
+        <div className="mb-6">
+          <Link to="/" className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 ease-in-out">
+            {t('page.police.backLink')}
+          </Link>
+        </div>
         
-        <CardContent className="mt-4">
-          {locationError && (
-            <div className="my-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-md flex items-center">
-              <AlertTriangle className="h-5 w-5 mr-2" />
-              <p>{locationError}</p>
-            </div>
-          )}
-          
-          {userLocation && sortByProximity && (
-            <p className="text-sm text-gray-600 mb-4">
-              {t('page.police.showingNearestFirst')}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedCommissariats.map((commissariat) => (
-          <Card key={commissariat.id} className="flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-200">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold text-gray-800 flex items-center">
-                <MapPin className="h-6 w-6 mr-2 text-indigo-500" />
-                {commissariat.name} 
-              </CardTitle>
-              {commissariat.address && <p className="text-sm text-gray-500 mt-1">{commissariat.address}</p>}
-            </CardHeader>
+        <Card className="shadow-lg mb-8">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
+              <Shield className="h-8 w-8 mr-3 text-indigo-600" />
+              {t('page.police.title')}
+            </CardTitle>
             
-            <CardContent className="flex-grow py-2">
-              {commissariat.distance !== undefined && (
-                <p className="text-indigo-600 font-medium flex items-center">
-                  <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
-                  {t('page.police.distanceAway', { distance: commissariat.distance })}
-                </p>
+            <Button 
+              onClick={toggleSortByProximity}
+              variant={sortByProximity ? "default" : "outline"}
+              disabled={isLoadingLocation}
+              className="whitespace-nowrap"
+            >
+              {isLoadingLocation ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('page.police.loadingLocation')}
+                </>
+              ) : (
+                sortByProximity ? "Trier par nom" : "Trier par proximité"
               )}
-            </CardContent>
+            </Button>
+          </CardHeader>
+          
+          <CardContent className="mt-4">
+            {locationError && (
+              <div className="my-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-md flex items-center">
+                <AlertTriangle className="h-5 w-5 mr-2" />
+                <p>{locationError}</p>
+              </div>
+            )}
             
-            <CardFooter>
-              <Button 
-                onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)} 
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-              >
-                <Navigation className="mr-2 h-5 w-5" />
-                {t('page.police.getDirections')}
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+            {userLocation && sortByProximity && (
+              <p className="text-sm text-gray-600 mb-4">
+                {t('page.police.showingNearestFirst')}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sortedCommissariats.map((commissariat) => (
+            <Card key={commissariat.id} className="flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-200">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-800 flex items-center">
+                  <MapPin className="h-6 w-6 mr-2 text-indigo-500" />
+                  {commissariat.name} 
+                </CardTitle>
+                {commissariat.address && <p className="text-sm text-gray-500 mt-1">{commissariat.address}</p>}
+              </CardHeader>
+              
+              <CardContent className="flex-grow py-2">
+                {commissariat.distance !== undefined && (
+                  <p className="text-indigo-600 font-medium flex items-center">
+                    <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
+                    {t('page.police.distanceAway', { distance: commissariat.distance })}
+                  </p>
+                )}
+              </CardContent>
+              
+              <CardFooter>
+                <Button 
+                  onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)} 
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                >
+                  <Navigation className="mr-2 h-5 w-5" />
+                  {t('page.police.getDirections')}
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

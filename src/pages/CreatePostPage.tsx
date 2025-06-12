@@ -5,6 +5,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useLanguage } from "@/contexts/LanguageContext";
 import toast from 'react-hot-toast';
+import MainLayout from "@/components/MainLayout";
 
 // Updated interface to reflect data from CreatePostForm and what's needed for Firestore
 export interface PostDataFromForm {
