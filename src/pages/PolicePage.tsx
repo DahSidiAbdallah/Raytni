@@ -42,13 +42,14 @@ function deg2rad(deg: number): number {
 }
 
 const PolicePage = () => {
-  console.log('--- RAYTNI POLICE PAGE LOADED - VERSION: ', new Date().toISOString()); // Temporary debug line
   const { t } = useLanguage();
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
-  const [sortedCommissariats, setSortedCommissariats] = useState<Commissariat[]>(mockCommissariats);
+  const [sortedCommissariats, setSortedCommissariats] = useState<Commissariat[]>([]);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [sortByProximity, setSortByProximity] = useState(false);
 
+  // Get user location on component mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -57,6 +58,8 @@ const PolicePage = () => {
           setUserLocation({ lat: latitude, lon: longitude });
           setLocationError(null);
           setIsLoadingLocation(false);
+          // Auto-sort by proximity when location is available
+          setSortByProximity(true);
         },
         (error) => {
           console.error("Error getting location: ", error);
@@ -71,23 +74,61 @@ const PolicePage = () => {
     }
   }, [t]);
 
+  // Update sorted commissariats when user location changes or sort preference changes
   useEffect(() => {
     if (userLocation) {
+      // Calculate distances for all commissariats
       const commissariatsWithDistance = mockCommissariats.map(commissariat => ({
         ...commissariat,
-        distance: getDistanceFromLatLonInKm(userLocation.lat, userLocation.lon, commissariat.lat, commissariat.lon)
+        distance: getDistanceFromLatLonInKm(
+          userLocation.lat, 
+          userLocation.lon, 
+          commissariat.lat, 
+          commissariat.lon
+        )
       }));
-      commissariatsWithDistance.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+      
+      // Sort by proximity if requested
+      if (sortByProximity) {
+        commissariatsWithDistance.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+      } else {
+        // Otherwise sort by name
+        commissariatsWithDistance.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      
       setSortedCommissariats(commissariatsWithDistance);
     } else {
-      // If no user location, sort by name or ID as a fallback (or keep original order)
-      const unSortedCommissariats = mockCommissariats.map(commissariat => ({
+      // If no user location, just sort by name
+      const unsortedCommissariats = mockCommissariats.map(commissariat => ({
         ...commissariat,
-        distance: undefined // Explicitly set distance to undefined
+        distance: undefined
       }));
-      setSortedCommissariats(unSortedCommissariats.sort((a,b) => a.name.localeCompare(b.name)));
+      setSortedCommissariats(unsortedCommissariats.sort((a, b) => a.name.localeCompare(b.name)));
     }
-  }, [userLocation, t]); // Added t to dependency array as localeCompare might be affected by lang in future if names are translated
+  }, [userLocation, sortByProximity]);
+
+  const toggleSortByProximity = () => {
+    if (!userLocation) {
+      // Try to get location again if not available
+      setIsLoadingLocation(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lon: longitude });
+          setSortByProximity(true);
+          setIsLoadingLocation(false);
+        },
+        (error) => {
+          console.error("Error getting location: ", error);
+          setLocationError(t('page.police.locationError'));
+          setIsLoadingLocation(false);
+        }
+      );
+    } else {
+      // Toggle sorting if location is available
+      setSortByProximity(!sortByProximity);
+    }
+  };
 
   const handleGetDirections = (lat: number, lon: number) => {
     if (userLocation) {
@@ -104,31 +145,43 @@ const PolicePage = () => {
           {t('page.police.backLink')}
         </Link>
       </div>
+      
       <Card className="shadow-lg mb-8">
-        <CardHeader>
-          <CardTitle className="text-2xl md:text-3xl font-bold text-center text-gray-800 flex items-center justify-center">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
             <Shield className="h-8 w-8 mr-3 text-indigo-600" />
             {t('page.police.title')}
           </CardTitle>
-        </CardHeader>
-        <CardContent className="mt-4">
-          {isLoadingLocation && (
-            <div className="flex items-center justify-center py-6 text-gray-600">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          
+          <Button 
+            onClick={toggleSortByProximity}
+            variant={sortByProximity ? "default" : "outline"}
+            disabled={isLoadingLocation}
+            className="whitespace-nowrap"
+          >
+            {isLoadingLocation ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 {t('page.police.loadingLocation')}
-            </div>
-          )}
-          {locationError && !isLoadingLocation && (
+              </>
+            ) : (
+              sortByProximity ? "Trier par nom" : "Trier par proximité"
+            )}
+          </Button>
+        </CardHeader>
+        
+        <CardContent className="mt-4">
+          {locationError && (
             <div className="my-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-md flex items-center">
               <AlertTriangle className="h-5 w-5 mr-2" />
               <p>{locationError}</p>
             </div>
           )}
-          {!isLoadingLocation && !locationError && (
-             <p className="text-sm text-gray-600 text-center mb-4">
-                {t('page.police.contentText')}{' '}
-                {userLocation && t('page.police.showingNearestFirst')}
-             </p>
+          
+          {userLocation && sortByProximity && (
+            <p className="text-sm text-gray-600 mb-4">
+              {t('page.police.showingNearestFirst')}
+            </p>
           )}
         </CardContent>
       </Card>
@@ -143,13 +196,16 @@ const PolicePage = () => {
               </CardTitle>
               {commissariat.address && <p className="text-sm text-gray-500 mt-1">{commissariat.address}</p>}
             </CardHeader>
+            
             <CardContent className="flex-grow py-2">
               {commissariat.distance !== undefined && (
-                <p className="text-indigo-600 font-medium">
+                <p className="text-indigo-600 font-medium flex items-center">
+                  <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
                   {t('page.police.distanceAway', { distance: commissariat.distance })}
                 </p>
               )}
             </CardContent>
+            
             <CardFooter>
               <Button 
                 onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)} 
@@ -162,15 +218,8 @@ const PolicePage = () => {
           </Card>
         ))}
       </div>
-      
-      {/* Placeholder for map if we want to re-add it later */}
-      {/* 
-      <div className="mt-8 h-96 bg-gray-200 rounded-md flex items-center justify-center shadow-md">
-        <p className="text-gray-500">Map View Placeholder</p>
-      </div>
-      */}
     </div>
   );
 };
 
-export default PolicePage; 
+export default PolicePage;

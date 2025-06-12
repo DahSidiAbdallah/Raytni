@@ -51,6 +51,14 @@ const translations: Record<Language, Record<string, string>> = {
     'status.found': 'TROUVÉ',
     'toast.success': '✅ Signalement publié avec succès!',
     'toast.success.desc': 'Votre signalement est maintenant visible par la communauté.',
+    'toast.loading': 'Publication en cours...',
+    'toast.error': 'Erreur lors de la publication',
+    'image.main': 'Image principale',
+    'image.select.main': 'Définir comme image principale',
+    'image.remove': 'Supprimer cette image',
+    'image.count': 'Image {current} sur {total}',
+    'image.upload.multiple': 'Vous pouvez télécharger plusieurs photos',
+    'image.main.info': 'Cliquez sur une image pour la définir comme principale',
 
     // SignInPage
     'page.signin.title': 'Se Connecter',
@@ -89,14 +97,23 @@ const translations: Record<Language, Record<string, string>> = {
 
     // PolicePage
     'page.police.backLink': '← Retour à l\'accueil',
-    'page.police.title': 'Page des Commissariats',
+    'page.police.title': 'Commissariats de Police',
     'page.police.contentText': 'Liste des commissariats à proximité.',
     'page.police.getDirections': 'Obtenir l\'itinéraire',
     'page.police.loadingLocation': 'Chargement de votre position...',
     'page.police.locationError': 'Impossible d\'obtenir votre position. Veuillez autoriser l\'accès à la localisation.',
     'page.police.distanceAway': '{distance} km',
     'page.police.geolocationNotSupported': 'La géolocalisation n\'est pas supportée par ce navigateur.',
-    'page.police.showingNearestFirst': 'Affichage des plus proches en premier.',
+    'page.police.showingNearestFirst': 'Affichage des commissariats les plus proches en premier.',
+    'page.police.refreshLocation': 'Actualiser ma position',
+    'page.police.showByProximity': 'Trier par proximité',
+    'page.police.showAlphabetical': 'Trier par ordre alphabétique',
+    'page.police.yourLocation': 'Votre position actuelle',
+    
+    // CreatePostPage
+    'page.createpost.toast.loading': 'Publication en cours...',
+    'page.createpost.toast.success': 'Signalement publié avec succès!',
+    'page.createpost.toast.error.generic': 'Erreur lors de la publication. Veuillez réessayer.',
   },
   ar: {
     'app.name': 'رايتني',
@@ -138,6 +155,14 @@ const translations: Record<Language, Record<string, string>> = {
     'status.found': 'موجود',
     'toast.success': '✅ تم نشر البلاغ بنجاح!',
     'toast.success.desc': 'بلاغك مرئي الآن للمجتمع.',
+    'toast.loading': 'جاري النشر...',
+    'toast.error': 'خطأ في النشر',
+    'image.main': 'الصورة الرئيسية',
+    'image.select.main': 'تعيين كصورة رئيسية',
+    'image.remove': 'إزالة هذه الصورة',
+    'image.count': 'صورة {current} من {total}',
+    'image.upload.multiple': 'يمكنك تحميل عدة صور',
+    'image.main.info': 'انقر على صورة لتعيينها كصورة رئيسية',
 
     // SignInPage
     'page.signin.title': 'تسجيل الدخول',
@@ -176,14 +201,23 @@ const translations: Record<Language, Record<string, string>> = {
 
     // PolicePage
     'page.police.backLink': '→ العودة إلى الرئيسية',
-    'page.police.title': 'صفحة مراكز الشرطة',
+    'page.police.title': 'مراكز الشرطة',
     'page.police.contentText': 'قائمة مراكز الشرطة القريبة.',
     'page.police.getDirections': 'الحصول على الاتجاهات',
     'page.police.loadingLocation': 'جاري تحميل موقعك...',
     'page.police.locationError': 'تعذر الحصول على موقعك. يرجى السماح بالوصول إلى الموقع.',
     'page.police.distanceAway': '{distance} كم',
     'page.police.geolocationNotSupported': 'المتصفح لا يدعم خدمة تحديد الموقع.',
-    'page.police.showingNearestFirst': 'يتم عرض الأقرب أولاً.',
+    'page.police.showingNearestFirst': 'يتم عرض مراكز الشرطة الأقرب أولاً.',
+    'page.police.refreshLocation': 'تحديث موقعي',
+    'page.police.showByProximity': 'ترتيب حسب القرب',
+    'page.police.showAlphabetical': 'ترتيب أبجدي',
+    'page.police.yourLocation': 'موقعك الحالي',
+    
+    // CreatePostPage
+    'page.createpost.toast.loading': 'جاري النشر...',
+    'page.createpost.toast.success': 'تم نشر البلاغ بنجاح!',
+    'page.createpost.toast.error.generic': 'خطأ في النشر. يرجى المحاولة مرة أخرى.',
   }
 };
 

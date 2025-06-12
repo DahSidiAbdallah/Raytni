@@ -1,29 +1,30 @@
 import CreatePostForm from "@/components/CreatePostForm";
 import { useNavigate } from "react-router-dom";
-import { db, storage } from "@/lib/firebase"; // auth removed
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"; // Firestore imports
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Storage imports
-import { useLanguage } from "@/contexts/LanguageContext"; // For alert messages
-import toast from 'react-hot-toast'; // Import toast
+import { db, storage } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useLanguage } from "@/contexts/LanguageContext";
+import toast from 'react-hot-toast';
 
 // Updated interface to reflect data from CreatePostForm and what's needed for Firestore
-// Exporting for use in CreatePostForm.tsx
 export interface PostDataFromForm {
   title: string;
   description: string;
-  mainCategory: string; // e.g., "personne", "objet" - maps to 'category' in Firestore
-  subCategory: string;  // e.g., "Enfant", "Téléphone" - maps to 'subCategory' in Firestore
-  locationName: string; // e.g., "Nouakchott" - maps to 'locationName' in Firestore
-  imageFile?: File | null; 
+  mainCategory: string;
+  subCategory: string;
+  locationName: string;
+  imageFiles: File[];
+  mainImageIndex: number;
   status: 'lost' | 'found';
-  dateTimeLostOrFound?: string; 
-  contactName: string; // Added
-  contactPhone: string; // Added
+  dateTimeLostOrFound?: string;
+  contactName: string;
+  contactPhone: string;
 }
 
 const CreatePostPage = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+<<<<<<< HEAD
 
   const handleCreatePost = () => {
     navigate('/create-post');
@@ -36,47 +37,59 @@ const CreatePostPage = () => {
   const handleViewHome = () => {
     navigate('/');
   };
+=======
+  const { t } = useLanguage();
+>>>>>>> 8f752e533d191a0b9fc83a15d33957290cd7ab5b
 
   const handlePostSubmit = async (dataFromForm: PostDataFromForm) => {
-    // VERY FIRST LINE: Simplest possible log
-    console.log("!!! [CreatePostPage] handlePostSubmit ENTERED !!! Data:", dataFromForm);
-    alert("CreatePostPage handlePostSubmit was called!"); // Use a blocking alert for absolute certainty
-
-    // const loadingToastId = toast.loading(t('page.createpost.toast.loading')); // Temporarily comment out
-    const loadingToastId = toast.loading("Submitting..."); // Use plain string for now
+    const loadingToastId = toast.loading("Publication en cours...");
 
     try {
-      let imageUrl = '';
-      if (dataFromForm.imageFile) {
-        const imagePath = `posts_images/${Date.now()}/${dataFromForm.imageFile.name}`;
-        const imageRef = ref(storage, imagePath);
-        await uploadBytes(imageRef, dataFromForm.imageFile);
-        imageUrl = await getDownloadURL(imageRef);
+      // Upload all images and get their URLs
+      const imageUrls: string[] = [];
+      let mainImageUrl = '';
+      
+      if (dataFromForm.imageFiles && dataFromForm.imageFiles.length > 0) {
+        // Process each image
+        for (let i = 0; i < dataFromForm.imageFiles.length; i++) {
+          const file = dataFromForm.imageFiles[i];
+          const imagePath = `posts_images/${Date.now()}_${i}_${file.name}`;
+          const imageRef = ref(storage, imagePath);
+          
+          await uploadBytes(imageRef, file);
+          const url = await getDownloadURL(imageRef);
+          imageUrls.push(url);
+          
+          // Set the main image URL
+          if (i === dataFromForm.mainImageIndex) {
+            mainImageUrl = url;
+          }
+        }
       }
 
       // Data to be saved in Firestore
       const postToSave = {
         title: dataFromForm.title,
         description: dataFromForm.description,
-        category: dataFromForm.mainCategory, // Main category (e.g., objet, personne)
-        subCategory: dataFromForm.subCategory, // Sub-category (e.g., Téléphone, Enfant)
-        locationName: dataFromForm.locationName, // City name
-        imageUrl: imageUrl, 
-        status: dataFromForm.status, // 'lost' or 'found'
-        dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound || null, // Optional date
-        contactName: dataFromForm.contactName, // Added
-        contactPhone: dataFromForm.contactPhone, // Added
+        category: dataFromForm.mainCategory,
+        subCategory: dataFromForm.subCategory,
+        locationName: dataFromForm.locationName,
+        imageUrls: imageUrls, // All image URLs
+        mainImageUrl: mainImageUrl, // Main image URL
+        status: dataFromForm.status,
+        dateTimeLostOrFound: dataFromForm.dateTimeLostOrFound || null,
+        contactName: dataFromForm.contactName,
+        contactPhone: dataFromForm.contactPhone,
         createdAt: serverTimestamp(),
       };
 
       await addDoc(collection(db, "posts"), postToSave);
-      // toast.success(t('page.createpost.toast.success'), { id: loadingToastId }); // Temporarily comment out
-      toast.success("Post created!", { id: loadingToastId }); // Use plain string
-      navigate("/browse"); 
+      
+      toast.success("Signalement publié avec succès!", { id: loadingToastId });
+      navigate("/browse");
     } catch (error) {
-      console.error("[CreatePostPage] Error in handlePostSubmit logic:", error);
-      // toast.error(t('page.createpost.toast.error.generic'), { id: loadingToastId }); // Temporarily comment out
-      toast.error("Error creating post.", { id: loadingToastId }); // Use plain string
+      console.error("Error creating post:", error);
+      toast.error("Erreur lors de la publication. Veuillez réessayer.", { id: loadingToastId });
     }
   };
 

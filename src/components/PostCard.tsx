@@ -16,6 +16,9 @@ interface Post {
   contactPhone: string;
   status: string;
   createdAt: string;
+  imageUrl?: string;
+  imageUrls?: string[];
+  mainImageUrl?: string;
 }
 
 interface PostCardProps {
@@ -59,6 +62,9 @@ const PostCard = ({ post }: PostCardProps) => {
     });
   };
 
+  // Get the image to display (main image or first available)
+  const displayImage = post.mainImageUrl || post.imageUrl || (post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls[0] : null);
+
   return (
     <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg group">
       <CardContent className="p-6">
@@ -77,6 +83,16 @@ const PostCard = ({ post }: PostCardProps) => {
             </span>
           </div>
         </div>
+
+        {displayImage && (
+          <div className="mb-4 aspect-video rounded-lg overflow-hidden">
+            <img 
+              src={displayImage} 
+              alt={post.title} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
 
         <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
           {post.title}

@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Calendar, Phone, ImagePlus } from "lucide-react";
+import { MapPin, Calendar, Phone, ImagePlus, Check, X } from "lucide-react";
 import { type PostDataFromForm } from "../pages/CreatePostPage";
 
 interface CreatePostFormProps {
@@ -24,7 +24,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     contactPhone: "",
     status: "lost" as 'lost' | 'found',
     images: [] as File[],
-    mainImageIndex: null as number | null
+    mainImageIndex: 0 // Default to first image
   });
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
@@ -41,7 +41,6 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("[CreatePostForm] handleSubmit triggered. formData:", formData);
     
     const dataForPage = {
       title: formData.title,
@@ -49,38 +48,30 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
       mainCategory: formData.type, 
       subCategory: formData.category,
       locationName: formData.location,
-      imageFile: formData.images.length > 0 ? formData.images[0] : null,
+      imageFiles: formData.images,
+      mainImageIndex: formData.mainImageIndex,
       status: formData.status,
       dateTimeLostOrFound: formData.dateTime || undefined,
       contactName: formData.contactName,
       contactPhone: formData.contactPhone,
     };
-    console.log("[CreatePostForm] About to call onSubmit with dataForPage:", dataForPage);
+    
     onSubmit(dataForPage);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
-      
-      const newMainImageIndex = filesArray.length > 0 
-        ? (formData.mainImageIndex !== null && formData.mainImageIndex < filesArray.length 
-            ? formData.mainImageIndex 
-            : 0) 
-        : null;
       
       setFormData({ 
         ...formData, 
         images: filesArray,
-        mainImageIndex: newMainImageIndex
+        // Keep current mainImageIndex if it's valid for the new array, otherwise reset to 0
+        mainImageIndex: formData.mainImageIndex < filesArray.length ? formData.mainImageIndex : 0
       });
 
+      // Generate previews
       const newPreviews: string[] = [];
-      setImagePreviews([]);
-
-      if (filesArray.length === 0) {
-        return;
-      }
       
       filesArray.forEach(file => {
         const reader = new FileReader();
@@ -92,6 +83,10 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
         };
         reader.readAsDataURL(file);
       });
+    } else {
+      // Clear images and previews if no files selected
+      setFormData({ ...formData, images: [], mainImageIndex: 0 });
+      setImagePreviews([]);
     }
   };
 
@@ -199,7 +194,11 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                   <MapPin className="h-4 w-4 inline mr-1" />
                   Lieu *
                 </label>
-                <Select onValueChange={(value) => setFormData({...formData, location: value})}>
+                <Select 
+                  value={formData.location}
+                  onValueChange={(value) => setFormData({...formData, location: value})}
+                  required
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Ville" />
                   </SelectTrigger>
@@ -253,36 +252,48 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <ImagePlus className="h-4 w-4 inline mr-1" />
-                  Photos (optionnel)
-                </label>
-                <Input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                />
-                {imagePreviews.length > 0 && (
-                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <ImagePlus className="h-4 w-4 inline mr-1" />
+                Photos (optionnel)
+              </label>
+              <Input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageChange}
+                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+              />
+              
+              {imagePreviews.length > 0 && (
+                <>
+                  <p className="mt-4 text-sm text-gray-600">
+                    {imagePreviews.length} photo(s) - Cliquez sur une image pour la définir comme principale
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                     {imagePreviews.map((preview, index) => (
                       <div 
                         key={index} 
-                        className={`relative aspect-square border rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+                        className={`relative aspect-square border rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer ${
+                          formData.mainImageIndex === index ? 'ring-2 ring-blue-500' : ''
+                        }`}
+                        onClick={() => handleSetMainImage(index)}
                       >
                         <img 
                           src={preview} 
                           alt={`Preview ${index + 1}`} 
                           className="absolute top-0 left-0 w-full h-full object-cover"
                         />
+                        {formData.mainImageIndex === index && (
+                          <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                            <Check className="h-4 w-4" />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </div>
 
             <div className="flex gap-4 pt-6">
