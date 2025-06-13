@@ -10,6 +10,7 @@ import CreatePostPage from './pages/CreatePostPage';
 import SafetyTipsPage from './pages/SafetyTipsPage';
 import BrowsePage from './pages/BrowsePage';
 import MainLayout from './components/MainLayout';
+import PostDetailsPage from './pages/PostDetailsPage';
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/create-post" element={<CreatePostPage />} />
             <Route path="/safety-tips" element={<SafetyTipsPage />} />
             <Route path="/browse" element={<BrowsePage />} />
+            <Route path="/post/:id" element={<PostDetailsPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

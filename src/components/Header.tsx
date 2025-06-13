@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Menu, X, Search as SearchIcon, Moon, Sun, Languages, Home, ListChecks, PlusCircle, LogIn, UserPlus, Shield } from 'lucide-react';
 import Logo from '/logo.png';
@@ -75,10 +75,36 @@ const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
             </nav>
           </div>
 
+          {/* Mobile Hamburger Menu */}
           <div className="md:hidden">
-            <Button variant="ghost" className="p-2">
-              <Menu className="h-6 w-6" />
-            </Button>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" className="p-2" onClick={() => setIsMobileMenuOpen(true)}>
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-0">
+                <div className="flex flex-col h-full">
+                  <div className="flex items-center justify-between px-4 py-4 border-b">
+                    <img className="h-8 w-auto" src={Logo} alt="Logo" onClick={() => { setIsMobileMenuOpen(false); handleViewHome(); }} />
+                  </div>
+                  <nav className="flex flex-col gap-2 px-4 py-6">
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleViewHome(); }} className="justify-start text-gray-700 hover:text-blue-600">
+                      <Home className="mr-2 h-5 w-5"/>{t('nav.home')}
+                    </Button>
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleViewBrowse(); }} className="justify-start text-gray-700 hover:text-blue-600">
+                      <ListChecks className="mr-2 h-5 w-5"/>{t('nav.browse')}
+                    </Button>
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleCreatePost(); }} className="justify-start text-gray-700 hover:text-blue-600">
+                      <PlusCircle className="mr-2 h-5 w-5"/>{t('nav.report')}
+                    </Button>
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); navigate('/police'); }} className="justify-start text-gray-700 hover:text-blue-600">
+                      <Shield className="mr-2 h-5 w-5"/>{t('nav.police')}
+                    </Button>
+                  </nav>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>

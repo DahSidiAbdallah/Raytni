@@ -27,6 +27,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     mainImageIndex: 0
   });
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const mauritanianCities = [
     "Nouakchott", "Nouadhibou", "Kaédi", "Zouérat", "Rosso", "Atar", 
@@ -39,8 +40,42 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     animal: ["Chat", "Chien", "Oiseau", "Autre"]
   };
 
+  // Helper: Validate phone number (must be 8 digits, start with 2, 3, or 4)
+  const isValidPhone = (phone: string) => {
+    const cleaned = phone.replace(/\D/g, "");
+    return /^(2|3|4)\d{7}$/.test(cleaned);
+  };
+
+  // Helper: Validate date (not after now, to the minute)
+  const isValidDate = (dateStr: string) => {
+    if (!dateStr) return true;
+    const inputDate = new Date(dateStr);
+    const now = new Date();
+    // Compare up to the minute
+    return inputDate.getTime() <= now.setSeconds(0, 0);
+  };
+
+  const validateForm = () => {
+    if (!formData.type) return "Type de signalement requis.";
+    if (!formData.category) return "Catégorie requise.";
+    if (!formData.title.trim()) return "Titre requis.";
+    if (!formData.description.trim()) return "Description requise.";
+    if (!formData.location) return "Ville requise.";
+    if (!formData.contactName.trim()) return "Nom du contact requis.";
+    if (!formData.contactPhone.trim()) return "Numéro de téléphone requis.";
+    if (!isValidPhone(formData.contactPhone)) return "Numéro de téléphone invalide : doit comporter 8 chiffres et commencer par 2, 3 ou 4.";
+    if (formData.dateTime && !isValidDate(formData.dateTime)) return "La date ne peut pas être dans le futur (précision à la minute).";
+    return null;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
+    const error = validateForm();
+    if (error) {
+      setFormError(error);
+      return;
+    }
     const dataForPage: PostDataFromForm = {
       title: formData.title,
       description: formData.description,
@@ -60,28 +95,24 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
-      setFormData({ 
-        ...formData, 
-        images: filesArray,
-        mainImageIndex: 0
-      });
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...filesArray],
+        mainImageIndex: prev.images.length === 0 ? 0 : prev.mainImageIndex
+      }));
 
       const newPreviews: string[] = [];
-      setImagePreviews([]); // Clear existing previews
-      
-      filesArray.forEach(file => {
+      let filesToPreview = [...imagePreviews];
+      filesArray.forEach((file, idx) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          newPreviews.push(reader.result as string);
-          if (newPreviews.length === filesArray.length) {
-            setImagePreviews(newPreviews);
+          filesToPreview.push(reader.result as string);
+          if (filesToPreview.length === formData.images.length + filesArray.length) {
+            setImagePreviews(filesToPreview);
           }
         };
         reader.readAsDataURL(file);
       });
-    } else {
-      setFormData({ ...formData, images: [], mainImageIndex: 0 });
-      setImagePreviews([]);
     }
   };
 
@@ -112,24 +143,22 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Créer un signalement</CardTitle>
+      <Card className="shadow-xl border-2 border-blue-100 bg-white/80 backdrop-blur-md">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-xl p-6">
+          <CardTitle className="text-3xl text-center text-white font-bold tracking-wide drop-shadow-lg">Créer un signalement</CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
+        <CardContent className="p-8">
+          {formError && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded border border-red-300 text-center">
+              {formError}
+            </div>
+          )}
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Type de signalement *
-                </label>
-                <Select 
-                  value={formData.type}
-                  onValueChange={(value) => {
-                    setFormData({ ...formData, type: value, category: "" });
-                  }}
-                >
-                  <SelectTrigger>
+                <label className="block text-base font-semibold text-blue-700 mb-2">Type de signalement *</label>
+                <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value, category: "" })}>
+                  <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
                     <SelectValue placeholder="Sélectionner un type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -139,17 +168,11 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                   </SelectContent>
                 </Select>
               </div>
-
               {formData.type && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Catégorie *
-                  </label>
-                  <Select 
-                    value={formData.category}
-                    onValueChange={(value) => setFormData({ ...formData, category: value })}
-                  >
-                    <SelectTrigger>
+                  <label className="block text-base font-semibold text-blue-700 mb-2">Catégorie *</label>
+                  <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                    <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
                       <SelectValue placeholder="Sélectionner une catégorie" />
                     </SelectTrigger>
                     <SelectContent>
@@ -161,43 +184,19 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 </div>
               )}
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Titre *
-              </label>
-              <Input
-                placeholder="Titre du signalement"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-              />
+              <label className="block text-base font-semibold text-blue-700 mb-2">Titre *</label>
+              <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder="Titre du signalement" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description *
-              </label>
-              <Textarea
-                placeholder="Description détaillée"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                required
-                rows={4}
-              />
+              <label className="block text-base font-semibold text-blue-700 mb-2">Description *</label>
+              <Textarea className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder="Description détaillée" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={4} />
             </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <MapPin className="inline-block mr-1 h-4 w-4" />
-                  Ville *
-                </label>
-                <Select 
-                  value={formData.location}
-                  onValueChange={(value) => setFormData({ ...formData, location: value })}
-                >
-                  <SelectTrigger>
+                <label className="block text-base font-semibold text-blue-700 mb-2"><MapPin className="inline-block mr-1 h-4 w-4 text-blue-400" />Ville *</label>
+                <Select value={formData.location} onValueChange={(value) => setFormData({ ...formData, location: value })}>
+                  <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
                     <SelectValue placeholder="Sélectionner une ville" />
                   </SelectTrigger>
                   <SelectContent>
@@ -207,30 +206,16 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                   </SelectContent>
                 </Select>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Calendar className="inline-block mr-1 h-4 w-4" />
-                  Date
-                </label>
-                <Input
-                  type="datetime-local"
-                  value={formData.dateTime}
-                  onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
-                />
+                <label className="block text-base font-semibold text-blue-700 mb-2"><Calendar className="inline-block mr-1 h-4 w-4 text-blue-400" />Date</label>
+                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" type="datetime-local" value={formData.dateTime} onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })} />
               </div>
             </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status *
-                </label>
-                <Select 
-                  value={formData.status}
-                  onValueChange={(value: 'lost' | 'found') => setFormData({ ...formData, status: value })}
-                >
-                  <SelectTrigger>
+                <label className="block text-base font-semibold text-blue-700 mb-2">Status *</label>
+                <Select value={formData.status} onValueChange={(value: 'lost' | 'found') => setFormData({ ...formData, status: value })}>
+                  <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
                     <SelectValue placeholder="Sélectionner le status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -240,94 +225,79 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 </Select>
               </div>
             </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Phone className="inline-block mr-1 h-4 w-4" />
-                  Nom du contact *
-                </label>
-                <Input
-                  placeholder="Nom complet"
-                  value={formData.contactName}
-                  onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                  required
-                />
+                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />Nom du contact *</label>
+                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder="Nom complet" value={formData.contactName} onChange={(e) => setFormData({ ...formData, contactName: e.target.value })} required />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Phone className="inline-block mr-1 h-4 w-4" />
-                  Numéro de téléphone *
-                </label>
-                <Input
-                  type="tel"
-                  placeholder="Numéro de téléphone"
-                  value={formData.contactPhone}
-                  onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-                  required
-                />
+                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />Numéro de téléphone *</label>
+                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" type="tel" placeholder="Numéro de téléphone" value={formData.contactPhone} onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })} required />
               </div>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <ImagePlus className="inline-block mr-1 h-4 w-4" />
-                Images
+              <label className="block text-base font-semibold text-blue-700 mb-2 flex items-center gap-2">
+                <ImagePlus className="inline-block h-5 w-5 text-blue-400" />
+                Add Images
               </label>
-              <Input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="mb-4"
-              />
-              
-              {imagePreviews.length > 0 && (
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                  {imagePreviews.map((preview, index) => (
-                    <div 
-                      key={index} 
-                      className="relative group cursor-pointer"
-                      onClick={() => handleSetMainImage(index)}
-                    >
-                      <img
-                        src={preview}
-                        alt={`Preview ${index + 1}`}
-                        className={`w-full h-32 object-cover rounded-lg border-2 transition-all ${
-                          index === formData.mainImageIndex ? 'border-blue-500' : 'border-gray-200 group-hover:border-blue-300'
-                        }`}
-                      />
-                      <div className="absolute top-2 right-2 flex gap-2">
-                        {index === formData.mainImageIndex && (
-                          <div className="bg-blue-500 text-white p-1 rounded-full">
-                            <Check className="h-4 w-4" />
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent triggering the parent's onClick
-                            removeImage(index);
-                          }}
-                          className="bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
+              <div className="text-sm text-gray-600 mb-4">Upload clear photos of your item. The first image will be the main photo.</div>
+              {/* Main image upload area */}
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 mb-6 min-h-[220px] relative group transition hover:border-blue-400">
+                {imagePreviews.length === 0 ? (
+                  <>
+                    <div className="flex flex-col items-center justify-center">
+                      <ImagePlus className="h-12 w-12 text-gray-300 mb-4" />
+                      <div className="text-gray-700 font-medium text-center mb-1">Drag and drop or click to upload</div>
+                      <div className="text-xs text-gray-400 mb-4">This will be your primary photo</div>
+                      <label htmlFor="main-image-upload" className="inline-block cursor-pointer">
+                        <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">Browse Files</span>
+                        <Input id="main-image-upload" type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
+                      </label>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center w-full">
+                    <div className="relative w-48 h-48 mb-2">
+                      <img src={imagePreviews[formData.mainImageIndex]} alt="Main preview" className="w-full h-full object-cover rounded-xl border-4 border-blue-500 shadow" />
+                      <button type="button" onClick={() => removeImage(formData.mainImageIndex)} className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow hover:bg-red-600">
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <div className="text-xs text-blue-500 font-medium mb-2">This is your primary photo</div>
+                    <label htmlFor="main-image-upload" className="inline-block cursor-pointer">
+                      <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">Browse Files</span>
+                      <Input id="main-image-upload" type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
+                    </label>
+                  </div>
+                )}
+              </div>
+              {/* Additional images grid */}
+              <div className="mb-2 text-base font-semibold text-blue-700">Images supplémentaires</div>
+              <div className="flex gap-4">
+                {[0,1,2,3].map((i) => (
+                  <div key={i} className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-white relative overflow-hidden">
+                    {imagePreviews[i+1] ? (
+                      <>
+                        <img src={imagePreviews[i+1]} alt={`Preview ${i+2}`} className="w-full h-full object-cover rounded-xl" />
+                        <button type="button" onClick={() => removeImage(i+1)} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full shadow hover:bg-red-600 z-10">
                           <X className="h-4 w-4" />
                         </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                        <button type="button" onClick={() => handleSetMainImage(i+1)} className={`absolute bottom-1 left-1 bg-blue-500 text-white p-1 rounded-full shadow ${formData.mainImageIndex === i+1 ? '' : 'opacity-60 hover:opacity-100'}`}> 
+                          <Check className="h-4 w-4" />
+                        </button>
+                      </>
+                    ) : (
+                      <label htmlFor="main-image-upload" className="w-full h-full flex items-center justify-center cursor-pointer">
+                        <span className="text-3xl text-gray-300">+</span>
+                      </label>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <div className="flex justify-between pt-6">
-              <Button type="button" variant="outline" onClick={onBack}>
-                Retour
-              </Button>
-              <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
-                Publier
-              </Button>
+            <div className="flex justify-between pt-8">
+              <Button type="button" variant="outline" onClick={onBack} className="rounded-lg px-6 py-2 text-blue-700 border-blue-400 hover:bg-blue-50">Retour</Button>
+              <Button type="submit" className="rounded-lg px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-blue-500">Publier</Button>
             </div>
           </form>
         </CardContent>

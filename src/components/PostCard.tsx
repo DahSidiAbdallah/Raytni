@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 interface Post {
   id: string;
@@ -27,6 +28,7 @@ interface PostCardProps {
 
 const PostCard = ({ post }: PostCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
     return status === "lost" ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600";
@@ -66,7 +68,7 @@ const PostCard = ({ post }: PostCardProps) => {
   const displayImage = post.mainImageUrl || post.imageUrl || (post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls[0] : null);
 
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg group">
+    <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg group cursor-pointer" onClick={() => navigate(`/post/${post.id}`)}>
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">
@@ -77,11 +79,7 @@ const PostCard = ({ post }: PostCardProps) => {
               {post.status === "lost" ? "PERDU" : "TROUVÉ"}
             </Badge>
           </div>
-          <div className="text-right">
-            <span className="text-sm text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
-              {formatDate(post.createdAt)}
-            </span>
-          </div>
+          {/* Removed date display */}
         </div>
 
         {displayImage && (
@@ -104,7 +102,7 @@ const PostCard = ({ post }: PostCardProps) => {
 
         {post.description.length > 150 && (
           <button
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={e => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
             className="text-blue-600 hover:text-blue-700 text-sm font-medium mb-4 flex items-center gap-1"
           >
             <Eye className="h-3 w-3" />
@@ -117,23 +115,12 @@ const PostCard = ({ post }: PostCardProps) => {
             <MapPin className="h-4 w-4 mr-3 text-blue-600 flex-shrink-0" />
             <span className="font-medium">{post.location}</span>
           </div>
-          
-          {post.dateTime && (
-            <div className="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg">
-              <Calendar className="h-4 w-4 mr-3 text-blue-600 flex-shrink-0" />
-              <span>{formatDateTime(post.dateTime)}</span>
-            </div>
-          )}
-          
-          <div className="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg">
-            <User className="h-4 w-4 mr-3 text-blue-600 flex-shrink-0" />
-            <span>{post.contactName}</span>
-          </div>
+          {/* Removed date and contactName from card */}
         </div>
 
         <Button 
           className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-          onClick={() => window.open(`tel:${post.contactPhone}`, '_self')}
+          onClick={e => { e.stopPropagation(); window.open(`tel:${post.contactPhone}`, '_self'); }}
         >
           <Phone className="h-4 w-4 mr-2" />
           <span className="font-medium">Contacter: {post.contactPhone}</span>

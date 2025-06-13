@@ -14,7 +14,8 @@ import {
   DocumentReference,
   getDoc,
   deleteDoc,
-  updateDoc
+  updateDoc,
+  doc
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
@@ -96,8 +97,8 @@ export const createPost = async (postData: PostInput): Promise<string> => {
  */
 export const getPostById = async (postId: string): Promise<Post | null> => {
   try {
-    const docRef = collection(db, 'posts');
-    const docSnap = await getDoc(docRef as unknown as DocumentReference);
+    const docRef = doc(db, 'posts', postId); // FIXED: use doc, not collection
+    const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       const data = docSnap.data();
