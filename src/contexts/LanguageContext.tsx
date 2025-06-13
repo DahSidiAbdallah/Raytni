@@ -14,14 +14,35 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// Get initial language from localStorage or default to 'fr'
+const getInitialLanguage = (): Language => {
+  const saved = localStorage.getItem('language');
+  if (saved === 'ar' || saved === 'fr') return saved;
+  return 'fr';
+};
+
+const initialLanguage = getInitialLanguage();
+
+// Fix import paths for translation files if alias '@' does not work
+// Try relative imports if you get module not found errors
+// import frTranslations from '../locales/fr.json';
+// import arTranslations from '../locales/ar.json';
+// If you use Vite/CRA alias '@', keep as is, otherwise use relative path
+let frTranslationsResolved = frTranslations;
+let arTranslationsResolved = arTranslations;
+
+// If import fails, fallback to empty object (prevents runtime crash)
+if (!frTranslationsResolved) frTranslationsResolved = {};
+if (!arTranslationsResolved) arTranslationsResolved = {};
+
 i18next
   .use(initReactI18next)
   .init({
     resources: {
-      fr: { translation: frTranslations },
-      ar: { translation: arTranslations }
+      fr: { translation: frTranslationsResolved },
+      ar: { translation: arTranslationsResolved }
     },
-    lng: 'fr',
+    lng: initialLanguage,
     fallbackLng: 'fr',
     interpolation: {
       escapeValue: false
@@ -29,24 +50,20 @@ i18next
   });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('fr');
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(initialLanguage);
 
   const setLanguage = (lang: Language) => {
     setCurrentLanguage(lang);
     i18next.changeLanguage(lang);
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
+    localStorage.setItem('language', lang);
   };
 
   useEffect(() => {
-    const savedLang = localStorage.getItem('language') as Language;
-    if (savedLang) {
-      setLanguage(savedLang);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('language', currentLanguage);
+    // Ensure HTML dir/lang are correct on mount
+    document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = currentLanguage;
   }, [currentLanguage]);
 
   return (

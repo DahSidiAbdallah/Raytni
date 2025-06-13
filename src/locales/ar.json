@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "browse": "تصفح",
+    "report": "إبلاغ",
+    "police": "الشرطة"
+  },
+  "page": {
+    "createpost": {
+      "success": "تم إنشاء البلاغ بنجاح!",
+      "error": {
+        "generic": "حدث خطأ أثناء إنشاء البلاغ.",
+        "notAuthenticated": "يجب عليك تسجيل الدخول لإنشاء بلاغ.",
+        "imageUploadError": "حدث خطأ أثناء رفع الصورة."
+      },
+      "toast": {
+        "loading": "جاري النشر...",
+        "success": "تم نشر البلاغ!",
+        "error": "حدث خطأ أثناء النشر."
+      }
+    }
+  },
+  "form": {
+    "title": "العنوان",
+    "description": "الوصف",
+    "category": "الفئة",
+    "type": "النوع",
+    "location": "المدينة",
+    "date": "التاريخ",
+    "status": "الحالة",
+    "contactName": "اسم جهة الاتصال",
+    "contactPhone": "رقم الهاتف",
+    "images": "الصور"
+  },
+  "status": {
+    "lost": "مفقود",
+    "found": "تم العثور عليه"
+  }
+}

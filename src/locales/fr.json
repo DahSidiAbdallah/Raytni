@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "browse": "Explorer",
+    "report": "Signaler",
+    "police": "Police"
+  },
+  "page": {
+    "createpost": {
+      "success": "Signalement créé avec succès !",
+      "error": {
+        "generic": "Une erreur est survenue lors de la création du signalement.",
+        "notAuthenticated": "Vous devez être connecté pour créer un signalement.",
+        "imageUploadError": "Erreur lors de l'envoi de l'image."
+      },
+      "toast": {
+        "loading": "Publication en cours...",
+        "success": "Signalement publié !",
+        "error": "Erreur lors de la publication."
+      }
+    }
+  },
+  "form": {
+    "title": "Titre",
+    "description": "Description",
+    "category": "Catégorie",
+    "type": "Type",
+    "location": "Ville",
+    "date": "Date",
+    "status": "Statut",
+    "contactName": "Nom du contact",
+    "contactPhone": "Numéro de téléphone",
+    "images": "Images"
+  },
+  "status": {
+    "lost": "Perdu",
+    "found": "Trouvé"
+  }
+}
