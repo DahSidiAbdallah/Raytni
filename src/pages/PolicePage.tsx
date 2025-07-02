@@ -179,39 +179,67 @@ const PolicePage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedCommissariats.map((commissariat) => (
-            <Card key={commissariat.id} className="flex flex-col justify-between shadow-md hover:shadow-lg transition-shadow duration-200">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-gray-800 flex items-center">
-                  <MapPin className="h-6 w-6 mr-2 text-indigo-500" />
-                  {commissariat.name} 
-                </CardTitle>
-                {commissariat.address && <p className="text-sm text-gray-500 mt-1">{commissariat.address}</p>}
-              </CardHeader>
-              
-              <CardContent className="flex-grow py-2">
+            <Card 
+              key={commissariat.id} 
+              className="group flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
+            >
+              <div className="relative
+                bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900
+                p-1 flex items-center justify-center h-32 overflow-hidden
+                bg-[radial-gradient(theme(colors.blue.100)_1px,transparent_1px)]
+                dark:bg-[radial-gradient(theme(colors.gray.700)_1px,transparent_1px)]
+                bg-[length:20px_20px]"
+              >
+                <div className="absolute inset-0 bg-white/30 dark:bg-black/20 backdrop-blur-sm" />
+                
+                <div className="relative z-10 text-center p-4">
+                  <div className="w-16 h-16 mx-auto mb-3 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+                    <Shield className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
+                    {commissariat.name}
+                  </CardTitle>
+                </div>
+                
                 {commissariat.distance !== undefined && (
-                  <p className="text-indigo-600 font-medium flex items-center">
-                    <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
-                    {t('page.police.distanceAway', { distance: commissariat.distance })}
-                  </p>
+                  <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm flex items-center">
+                    <MapPin className="h-3 w-3 mr-1" />
+                    {commissariat.distance} km
+                  </div>
                 )}
-                <p className="mt-2 text-blue-700 font-medium flex items-center">
-                  <a href={`tel:${commissariat.phone}`} onClick={e => e.stopPropagation()} className="hover:underline flex items-center">
-                    <Shield className="h-4 w-4 mr-1 text-blue-500" />
-                    {commissariat.phone}
-                  </a>
-                </p>
-              </CardContent>
+              </div>
               
-              <CardFooter>
-                <Button 
-                  onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)} 
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-                >
-                  <Navigation className="mr-2 h-5 w-5" />
-                  {t('page.police.getDirections')}
-                </Button>
-              </CardFooter>
+              <div className="p-5 pt-3">
+                {commissariat.address && (
+                  <div className="mb-4 flex items-start">
+                    <MapPin className="h-5 w-5 text-indigo-500 dark:text-indigo-400 mt-0.5 mr-2 flex-shrink-0" />
+                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                      {commissariat.address}
+                    </p>
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-between bg-blue-50 dark:bg-gray-800/50 p-3 rounded-lg">
+                  <div className="flex items-center">
+                    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
+                    <a 
+                      href={`tel:${commissariat.phone}`} 
+                      onClick={e => e.stopPropagation()} 
+                      className="text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center"
+                    >
+                      {commissariat.phone}
+                    </a>
+                  </div>
+                  <Button 
+                    onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)}
+                    size="sm"
+                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 shadow-sm"
+                  >
+                    <Navigation className="h-4 w-4 mr-1.5" />
+                    {t('page.police.getDirections')}
+                  </Button>
+                </div>
+              </div>
             </Card>
           ))}
         </div>
