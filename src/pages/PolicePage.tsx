@@ -5,6 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Shield, MapPin, Navigation, AlertTriangle, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import MainLayout from '@/components/MainLayout';
+import { 
+  getCurrentPosition, 
+  findNearestLocations,
+  getDistanceFromLatLonInKm as getDistanceFromLatLonInKmService
+} from '@/services/locationService';
 
 interface Commissariat {
   id: string;
@@ -12,35 +17,28 @@ interface Commissariat {
   address?: string;
   lat: number;
   lon: number;
+  phone: string;
   distance?: number; // Distance in km
 }
 
 // Mock data - replace with actual data source later
 const mockCommissariats: Commissariat[] = [
-  { id: '1', name: 'Commissariat Central', address: 'Avenue Gamal Abdel Nasser, Nouakchott', lat: 18.0731, lon: -15.9582 },
-  { id: '2', name: 'Commissariat Tevragh Zeina 1', address: 'Près de l\'ancien aéroport, Nouakchott', lat: 18.0988, lon: -15.9734 },
-  { id: '3', name: 'Commissariat Ksar 2', address: 'Carrefour BMD, Nouakchott', lat: 18.0834, lon: -15.9681 },
-  { id: '4', name: 'Commissariat Sebkha', address: 'Marché Sebkha, Nouakchott', lat: 18.0645, lon: -15.9802 },
-  { id: '5', name: 'Commissariat Arafat 3', address: 'Carrefour Hay Mohammédia, Nouakchott', lat: 18.0511, lon: -15.9433 },
+  { id: '1', name: 'Commissariat Central', address: 'Avenue Gamal Abdel Nasser, Nouakchott', lat: 18.0731, lon: -15.9582, phone: '+22245251234' },
+  { id: '2', name: 'Commissariat Tevragh Zeina 1', address: "Près de l'ancien aéroport, Nouakchott", lat: 18.0988, lon: -15.9734, phone: '+22245251235' },
+  { id: '3', name: 'Commissariat Ksar 2', address: 'Carrefour BMD, Nouakchott', lat: 18.0834, lon: -15.9681, phone: '+22245251236' },
+  { id: '4', name: 'Commissariat Sebkha', address: 'Marché Sebkha, Nouakchott', lat: 18.0645, lon: -15.9802, phone: '+22245251237' },
+  { id: '5', name: 'Commissariat Arafat 3', address: 'Carrefour Hay Mohammédia, Nouakchott', lat: 18.0511, lon: -15.9433, phone: '+22245251238' },
+  { id: '6', name: 'Commissariat El Mina', address: 'Quartier El Mina, Nouakchott', lat: 18.0320, lon: -15.9750, phone: '+22245251239' },
+  { id: '7', name: 'Commissariat Dar Naïm', address: 'Route de l’Espoir, Dar Naïm', lat: 18.1545, lon: -15.8902, phone: '+22245251240' },
+  { id: '8', name: 'Commissariat Toujounine', address: 'Toujounine, Nouakchott', lat: 18.1080, lon: -15.8765, phone: '+22245251241' },
+  { id: '9', name: 'Commissariat Teyaret', address: 'Teyaret, Nouakchott', lat: 18.1200, lon: -15.9620, phone: '+22245251242' },
+  { id: '10', name: 'Commissariat Riyadh', address: 'Riyadh, Nouakchott', lat: 18.0250, lon: -15.9170, phone: '+22245251243' },
+  { id: '11', name: 'Commissariat Nouadhibou', address: 'Avenue Maritime, Nouadhibou', lat: 20.9333, lon: -17.0333, phone: '+22246251244' },
+  { id: '12', name: 'Commissariat Kiffa', address: 'Centre-ville, Kiffa', lat: 16.6200, lon: -11.4042, phone: '+22247251245' },
+  { id: '13', name: 'Commissariat Rosso', address: 'Quartier Administratif, Rosso', lat: 16.5133, lon: -15.8053, phone: '+22248251246' },
+  { id: '14', name: 'Commissariat Sélibaby', address: 'Sélibaby', lat: 15.1587, lon: -12.1842, phone: '+22249251247' },
+  { id: '15', name: 'Commissariat Atar', address: 'Atar', lat: 20.5169, lon: -13.0499, phone: '+22250251248' },
 ];
-
-// Haversine formula to calculate distance between two points on Earth
-function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // Radius of the earth in km
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in km
-  return parseFloat(distance.toFixed(1)); // Round to 1 decimal place
-}
-
-function deg2rad(deg: number): number {
-  return deg * (Math.PI / 180);
-}
 
 const PolicePage = () => {
   const { t } = useLanguage();
@@ -52,84 +50,75 @@ const PolicePage = () => {
 
   // Get user location on component mount
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation({ lat: latitude, lon: longitude });
-          setLocationError(null);
-          setIsLoadingLocation(false);
-          // Auto-sort by proximity when location is available
-          setSortByProximity(true);
-        },
-        (error) => {
-          console.error("Error getting location: ", error);
-          setLocationError(t('page.police.locationError'));
-          setIsLoadingLocation(false);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    } else {
-      setLocationError(t('page.police.geolocationNotSupported'));
-      setIsLoadingLocation(false);
-    }
+    const fetchLocation = async () => {
+      setIsLoadingLocation(true);
+      try {
+        const coords = await getCurrentPosition();
+        setUserLocation({ lat: coords.latitude, lon: coords.longitude });
+        setLocationError(null);
+        setSortByProximity(true);
+      } catch (error) {
+        setLocationError(t('page.police.locationError'));
+        setSortByProximity(false);
+      } finally {
+        setIsLoadingLocation(false);
+      }
+    };
+    fetchLocation();
   }, [t]);
 
   // Update sorted commissariats when user location changes or sort preference changes
   useEffect(() => {
     if (userLocation) {
-      // Calculate distances for all commissariats
-      const commissariatsWithDistance = mockCommissariats.map(commissariat => ({
-        ...commissariat,
-        distance: getDistanceFromLatLonInKm(
-          userLocation.lat, 
-          userLocation.lon, 
-          commissariat.lat, 
-          commissariat.lon
-        )
-      }));
-      
-      // Sort by proximity if requested
       if (sortByProximity) {
-        commissariatsWithDistance.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+        // Use the findNearestLocations function from the service
+        const nearest = findNearestLocations(
+          mockCommissariats.map(c => ({
+            ...c,
+            latitude: c.lat,
+            longitude: c.lon
+          })),
+          { latitude: userLocation.lat, longitude: userLocation.lon },
+          mockCommissariats.length // Show all commissariats but sorted by distance
+        );
+        
+        setSortedCommissariats(nearest);
       } else {
-        // Otherwise sort by name
-        commissariatsWithDistance.sort((a, b) => a.name.localeCompare(b.name));
+        // Sort by name
+        const sortedByName = [...mockCommissariats].sort((a, b) => 
+          a.name.localeCompare(b.name)
+        );
+        setSortedCommissariats(sortedByName);
       }
-      
-      setSortedCommissariats(commissariatsWithDistance);
     } else {
       // If no user location, just sort by name
-      const unsortedCommissariats = mockCommissariats.map(commissariat => ({
-        ...commissariat,
-        distance: undefined
-      }));
-      setSortedCommissariats(unsortedCommissariats.sort((a, b) => a.name.localeCompare(b.name)));
+      const sortedByName = [...mockCommissariats].sort((a, b) => 
+        a.name.localeCompare(b.name)
+      );
+      setSortedCommissariats(sortedByName);
     }
   }, [userLocation, sortByProximity]);
 
-  const toggleSortByProximity = () => {
-    if (!userLocation) {
-      // Try to get location again if not available
+  const toggleSortByProximity = async () => {
+    if (!sortByProximity) {
       setIsLoadingLocation(true);
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation({ lat: latitude, lon: longitude });
-          setSortByProximity(true);
-          setIsLoadingLocation(false);
-        },
-        (error) => {
-          console.error("Error getting location: ", error);
-          setLocationError(t('page.police.locationError'));
-          setIsLoadingLocation(false);
-        }
-      );
+      try {
+        // Request location permission first
+        const coords = await getCurrentPosition();
+        setUserLocation({ lat: coords.latitude, lon: coords.longitude });
+        setLocationError(null);
+        setSortByProximity(true);
+      } catch (error) {
+        setLocationError(t('page.police.locationError'));
+        setSortByProximity(false);
+      } finally {
+        setIsLoadingLocation(false);
+      }
     } else {
-      // Toggle sorting if location is available
-      setSortByProximity(!sortByProximity);
+      setSortByProximity(false);
     }
   };
+
 
   const handleGetDirections = (lat: number, lon: number) => {
     if (userLocation) {
@@ -206,6 +195,12 @@ const PolicePage = () => {
                     {t('page.police.distanceAway', { distance: commissariat.distance })}
                   </p>
                 )}
+                <p className="mt-2 text-blue-700 font-medium flex items-center">
+                  <a href={`tel:${commissariat.phone}`} onClick={e => e.stopPropagation()} className="hover:underline flex items-center">
+                    <Shield className="h-4 w-4 mr-1 text-blue-500" />
+                    {commissariat.phone}
+                  </a>
+                </p>
               </CardContent>
               
               <CardFooter>

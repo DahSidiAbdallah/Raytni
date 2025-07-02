@@ -29,26 +29,80 @@ const commissariats = [
   {
     name: 'Commissariat Central de Nouakchott',
     address: 'Avenue Gamal Abdel Nasser, Nouakchott',
-    phone: '+222 45 25 12 34',
+    phone: '+22245251234',
     position: [18.0858, -15.9785],
   },
   {
     name: 'Commissariat de Police de Nouadhibou',
     address: 'Rue de la Police, Nouadhibou',
-    phone: '+222 46 25 12 35',
+    phone: '+22246251235',
     position: [20.9333, -17.0333],
   },
   {
     name: 'Commissariat de Police de Kiffa',
     address: 'Centre-ville, Kiffa',
-    phone: '+222 47 25 12 36',
+    phone: '+22247251236',
     position: [16.6200, -11.4042],
   },
   {
     name: 'Commissariat de Police de Rosso',
     address: 'Quartier Administratif, Rosso',
-    phone: '+222 48 25 12 37',
+    phone: '+22248251237',
     position: [16.5133, -15.8053],
+  },
+  {
+    name: 'Commissariat Sebkha',
+    address: 'Marché Sebkha, Nouakchott',
+    phone: '+22245251238',
+    position: [18.0645, -15.9802],
+  },
+  {
+    name: 'Commissariat Arafat 3',
+    address: 'Carrefour Hay Mohammédia, Nouakchott',
+    phone: '+22245251239',
+    position: [18.0511, -15.9433],
+  },
+  {
+    name: 'Commissariat El Mina',
+    address: 'Quartier El Mina, Nouakchott',
+    phone: '+22245251240',
+    position: [18.0320, -15.9750],
+  },
+  {
+    name: 'Commissariat Dar Naïm',
+    address: 'Route de l’Espoir, Dar Naïm',
+    phone: '+22245251241',
+    position: [18.1545, -15.8902],
+  },
+  {
+    name: 'Commissariat Toujounine',
+    address: 'Toujounine, Nouakchott',
+    phone: '+22245251242',
+    position: [18.1080, -15.8765],
+  },
+  {
+    name: 'Commissariat Teyaret',
+    address: 'Teyaret, Nouakchott',
+    phone: '+22245251243',
+    position: [18.1200, -15.9620],
+  },
+  {
+    name: 'Commissariat Riyadh',
+    address: 'Riyadh, Nouakchott',
+    phone: '+22245251244',
+    position: [18.0250, -15.9170],
+  },
+  {
+    name: 'Commissariat Sélibaby',
+    address: 'Sélibaby',
+    phone: '+22249251245',
+    position: [15.1587, -12.1842],
+  },
+  {
+    name: 'Commissariat Atar',
+    address: 'Atar',
+    phone: '+22250251246',
+    position: [20.5169, -13.0499],
   },
 ];
 
@@ -185,7 +239,10 @@ export default function PolicePage() {
                     <div className="font-semibold">{c.name}</div>
                     <div className="text-sm text-gray-700">{c.address}</div>
                     <div className="text-sm text-blue-700 mt-1 flex items-center gap-1">
-                      <Phone className="h-4 w-4" /> {c.phone}
+                      <Phone className="h-4 w-4" />
+                      <a href={`tel:${c.phone}`} onClick={e => e.stopPropagation()} className="hover:underline">
+                        {c.phone}
+                      </a>
                     </div>
                   </Popup>
                 </Marker>
@@ -210,7 +267,10 @@ export default function PolicePage() {
                   <div className="text-sm text-gray-700 ml-6">{c.address}</div>
                 </div>
                 <div className="text-blue-700 font-medium flex items-center gap-2 ml-6 md:ml-0">
-                  <Phone className="h-4 w-4" /> {c.phone}
+                  <Phone className="h-4 w-4" />
+                  <a href={`tel:${c.phone}`} onClick={e => e.stopPropagation()} className="hover:underline">
+                    {c.phone}
+                  </a>
                 </div>
               </li>
             ))}
