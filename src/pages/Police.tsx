@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import markerIcon2xUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIconUrl from 'leaflet/dist/images/marker-icon.png';
 import markerShadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import { getCurrentPosition } from '@/services/locationService';
 
 // Create a custom Leaflet icon
 const customMarkerIcon = L.icon({
@@ -118,19 +119,14 @@ export default function PolicePage() {
   const [sortedCommissariats, setSortedCommissariats] = useState(commissariats);
 
   useEffect(() => {
-    // Request location on component mount
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation([position.coords.latitude, position.coords.longitude]);
-        },
-        (error) => {
-          console.error("Error getting user location on mount:", error);
-          // Optional: alert the user that location could not be obtained automatically
-          // alert("Could not automatically determine your location. Map will show default view.");
-        }
-      );
-    }
+    // Request location on component mount using the service helper
+    getCurrentPosition()
+      .then((coords) => {
+        setUserLocation([coords.latitude, coords.longitude]);
+      })
+      .catch((error) => {
+        console.error('Error getting user location on mount:', error);
+      });
   }, []); // Empty dependency array ensures this runs only once on mount
 
   // Function to calculate distance using Haversine formula
@@ -164,19 +160,17 @@ export default function PolicePage() {
     }
   }, [sortByProximity, userLocation]);
 
-  const handleSortByProximity = () => {
+  const handleSortByProximity = async () => {
     if (!userLocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation([position.coords.latitude, position.coords.longitude]);
-          setSortByProximity(true);
-        },
-        (error) => {
-          console.error("Error getting user location:", error);
-          alert("Could not get your location. Please ensure location services are enabled.");
-          setSortByProximity(false); // Fallback to showing all
-        }
-      );
+      try {
+        const coords = await getCurrentPosition();
+        setUserLocation([coords.latitude, coords.longitude]);
+        setSortByProximity(true);
+      } catch (error) {
+        console.error('Error getting user location:', error);
+        alert('Could not get your location. Please ensure location services are enabled.');
+        setSortByProximity(false); // Fallback to showing all
+      }
     } else {
       setSortByProximity(!sortByProximity); // Toggle if location is already known
     }
