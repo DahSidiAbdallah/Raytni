@@ -1,73 +1,156 @@
-# Welcome to your Lovable project
+# Raytni - Missing Persons and Lost Items Platform
 
-## Project info
+**Raytni** is a community-driven platform for finding missing persons, lost objects, and stray animals in Mauritania.
 
-**URL**: https://lovable.dev/projects/c249ff3e-2c00-46bf-a4a8-9571c9f7554a
+## Project Overview
 
-## How can I edit this code?
+This is a modern web application built with React, TypeScript, and Firebase, designed to help the Mauritanian community reunite with what matters most to them.
 
-There are several ways of editing your application.
+### Features
 
-**Use Lovable**
+- 🔍 **Report Missing Items/Persons**: Easy-to-use forms for reporting missing persons, objects, and animals
+- 🗺️ **Location-Based Search**: Browse reports by location throughout Mauritania
+- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- 🌐 **Multilingual Support**: Available in French and Arabic
+- 📸 **Image Upload**: Support for photos to help with identification
+- ⚡ **Real-time Updates**: Powered by Firebase for instant synchronization
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c249ff3e-2c00-46bf-a4a8-9571c9f7554a) and start prompting.
+## Technology Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18, TypeScript, Vite
+- **UI Framework**: Tailwind CSS with shadcn/ui components
+- **Backend**: Firebase (Firestore, Storage)
+- **Internationalization**: i18next for French/Arabic support
+- **Maps**: Leaflet for location services
+- **Deployment**: Docker, Nginx
 
-**Use your preferred IDE**
+## Development Setup
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js 18+ and npm
+- Git
 
-Follow these steps:
+### Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+```bash
+# Clone the repository
 git clone <YOUR_GIT_URL>
+cd raytni
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Production Deployment
 
-**Use GitHub Codespaces**
+### Quick Production Build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+**For Linux/macOS:**
+```bash
+chmod +x build-prod.sh
+./build-prod.sh
+```
 
-## What technologies are used for this project?
+**For Windows:**
+```cmd
+build-prod.bat
+```
 
-This project is built with:
+### Manual Production Build
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+# Install dependencies
+npm ci
 
-## How can I deploy this project?
+# Run linting
+npm run lint
 
-Simply open [Lovable](https://lovable.dev/projects/c249ff3e-2c00-46bf-a4a8-9571c9f7554a) and click on Share -> Publish.
+# Build for production
+npm run build
 
-## Can I connect a custom domain to my Lovable project?
+# Preview the build locally
+npm run preview
+```
 
-Yes, you can!
+### Environment Variables
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Create a `.env.production` file based on `.env.example`:
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```env
+VITE_FIREBASE_API_KEY=your_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain_here
+VITE_FIREBASE_PROJECT_ID=your_project_id_here
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket_here
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id_here
+VITE_FIREBASE_APP_ID=your_app_id_here
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id_here
+```
+
+### Docker Deployment
+
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+
+# Or build manually
+docker build -t raytni .
+docker run -p 80:80 raytni
+```
+
+### Traditional Web Server Deployment
+
+After building, deploy the `dist/` folder contents to any web server (Apache, Nginx, etc.).
+
+**Nginx Configuration Example:**
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /path/to/raytni/dist;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+## Production Checklist
+
+- [ ] Set up Firebase project and configure environment variables
+- [ ] Configure domain name and SSL certificate
+- [ ] Set up monitoring and analytics
+- [ ] Configure backup strategies for Firebase data
+- [ ] Test all features in production environment
+- [ ] Set up error tracking (e.g., Sentry)
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run build:prod` - Build with linting for production
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint
+- `npm test` - Run tests
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## License
+
+This project is developed for the Mauritanian community to help reunite families and recover lost items.
+
+---
+
+**Built with ❤️ for the people of Mauritania**

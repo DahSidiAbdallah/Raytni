@@ -70,24 +70,57 @@ export function getCurrentPosition(options: GeolocationOptions = {}): Promise<Ge
       return;
     }
 
+    const finalOptions = { 
+      enableHighAccuracy: false, // Start with less demanding settings
+      timeout: 10000,
+      maximumAge: 300000, // 5 minutes cache
+      ...options 
+    };
+
+    console.log('Requesting geolocation with options:', finalOptions);
+
     navigator.geolocation.getCurrentPosition(
-      (position) => resolve(position.coords),
+      (position) => {
+        console.log('Geolocation success:', position.coords);
+        resolve(position.coords);
+      },
       (error) => {
+        console.error('Geolocation error:', error);
+        console.error('Error code:', error.code, 'Message:', error.message);
+        
         let errorMessage = 'Error getting location';
+        
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'User denied the request for geolocation.';
+            // Try to be more specific about permission issues
+            if (navigator.permissions) {
+              navigator.permissions.query({ name: 'geolocation' }).then(permission => {
+                console.log('Permission state after error:', permission.state);
+              });
+            }
+            errorMessage = 'Accès à la localisation refusé. Veuillez vérifier les paramètres de localisation de votre navigateur et de votre système.';
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information is unavailable.';
+            errorMessage = 'Position indisponible. Vérifiez que les services de localisation sont activés sur votre appareil.';
             break;
           case error.TIMEOUT:
-            errorMessage = 'The request to get user location timed out.';
+            errorMessage = 'Délai d\'attente dépassé. Réessayez avec une connexion plus stable.';
             break;
+          default:
+            errorMessage = `Erreur de géolocalisation (${error.code}): ${error.message}`;
         }
-        reject(new Error(errorMessage));
+        
+        // If high accuracy failed, try again with lower accuracy
+        if (options.enableHighAccuracy && error.code === error.POSITION_UNAVAILABLE) {
+          console.log('High accuracy failed, retrying with standard accuracy...');
+          getCurrentPosition({ ...options, enableHighAccuracy: false })
+            .then(resolve)
+            .catch(() => reject(new Error(errorMessage)));
+        } else {
+          reject(new Error(errorMessage));
+        }
       },
-      { ...DEFAULT_OPTIONS, ...options }
+      finalOptions
     );
   });
 }
