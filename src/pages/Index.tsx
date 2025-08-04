@@ -77,19 +77,19 @@ const Index = () => {
         onViewBrowse={handleBrowse}
       />
       
-      {/* Recent Posts Section */}
-      <section className="max-w-7xl mx-auto px-4 py-20 w-full">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+      {/* Recent Posts Section - Now more prominent */}
+      <section className="max-w-7xl mx-auto px-4 py-16 w-full">
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold text-gray-900 mb-6">
             {t('home.recentPosts')}
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             {t('home.recentPosts.subtitle')}
           </p>
         </div>
         
         {recentPosts.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-20">
             <div className="text-gray-300 text-8xl mb-6">📢</div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-3">{t('home.noPosts')}</h3>
             <p className="text-gray-600 mb-8 text-lg">{t('home.noPosts.subtitle')}</p>
@@ -111,7 +111,7 @@ const Index = () => {
         )}
         
         {recentPosts.length > 0 && (
-          <div className="text-center mt-12">
+          <div className="text-center mt-16">
             <button
               onClick={handleBrowse}
               className="bg-white text-blue-600 border-2 border-blue-500 px-8 py-4 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 hover:bg-blue-50"

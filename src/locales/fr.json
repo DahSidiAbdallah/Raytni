@@ -35,5 +35,22 @@
   "status": {
     "lost": "Perdu",
     "found": "Trouvé"
+  },
+  "home": {
+    "recentPosts": "Signalements récents",
+    "recentPosts.subtitle": "Découvrez les derniers signalements de la communauté",
+    "noPosts": "Aucun signalement pour le moment",
+    "noPosts.subtitle": "Soyez le premier à publier un signalement",
+    "createPost": "Créer un signalement",
+    "viewAll": "Voir tous les signalements",
+    "signalerUneDisparition": "Signaler une disparition",
+    "parcourirLesSignalements": "Parcourir les signalements"
+  },
+  "loading": {
+    "text": "Chargement..."
+  },
+  "error": {
+    "fetchPosts": "Erreur lors du chargement des signalements",
+    "tryAgain": "Veuillez réessayer plus tard"
   }
 }

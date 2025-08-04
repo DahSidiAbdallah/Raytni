@@ -35,5 +35,22 @@
   "status": {
     "lost": "مفقود",
     "found": "تم العثور عليه"
+  },
+  "home": {
+    "recentPosts": "البلاغات الأخيرة",
+    "recentPosts.subtitle": "اكتشف أحدث بلاغات المجتمع",
+    "noPosts": "لا توجد بلاغات في الوقت الحالي",
+    "noPosts.subtitle": "كن أول من ينشر بلاغاً",
+    "createPost": "إنشاء بلاغ",
+    "viewAll": "عرض جميع البلاغات",
+    "signalerUneDisparition": "الإبلاغ عن اختفاء",
+    "parcourirLesSignalements": "تصفح البلاغات"
+  },
+  "loading": {
+    "text": "جارٍ التحميل..."
+  },
+  "error": {
+    "fetchPosts": "خطأ في تحميل البلاغات",
+    "tryAgain": "يرجى المحاولة مرة أخرى لاحقاً"
   }
 }
