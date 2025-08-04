@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Shield, MapPin, Navigation, AlertTriangle, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import MainLayout from '@/components/MainLayout';
 import { 
   getCurrentPosition, 
   findNearestLocations,
@@ -129,13 +128,12 @@ const PolicePage = () => {
   };
 
   return (
-    <MainLayout>
-      <div className="container mx-auto py-8 px-4">
-        <div className="mb-6">
-          <Link to="/" className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 ease-in-out">
-            {t('page.police.backLink')}
-          </Link>
-        </div>
+    <div className="container mx-auto py-8 px-4">
+      <div className="mb-6">
+        <Link to="/" className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 ease-in-out">
+          {t('page.police.backLink')}
+        </Link>
+      </div>
         
         <Card className="shadow-lg mb-8">
           <CardHeader className="flex flex-row items-center justify-between">
@@ -244,7 +242,7 @@ const PolicePage = () => {
           ))}
         </div>
       </div>
-    </MainLayout>
+    </div>
   );
 };
 

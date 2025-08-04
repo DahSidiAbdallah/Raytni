@@ -5,7 +5,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Menu, X, Search as SearchIcon, Moon, Sun, Languages, Home, ListChecks, PlusCircle, LogIn, UserPlus, Shield } from 'lucide-react';
 import Logo from '/logo.png';
-import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSelector from './LanguageSelector';
 
 interface HeaderProps {
   onCreatePost?: () => void;
@@ -15,7 +16,7 @@ interface HeaderProps {
 
 const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
   const navigate = useNavigate();
-  const { language, setLanguage, t } = useLanguage();
+  const { currentLanguage, setLanguage, t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -75,6 +76,11 @@ const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
             </nav>
           </div>
 
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            <LanguageSelector />
+          </div>
+
           {/* Mobile Hamburger Menu */}
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -102,6 +108,9 @@ const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
                       <Shield className="mr-2 h-5 w-5"/>{t('nav.police')}
                     </Button>
                   </nav>
+                  <div className="px-4 py-4 border-t mt-auto">
+                    <LanguageSelector />
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>

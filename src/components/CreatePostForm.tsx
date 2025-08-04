@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Calendar, Phone, ImagePlus, Check, X } from "lucide-react";
 import { type PostDataFromForm } from "../pages/CreatePostPage";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface CreatePostFormProps {
   onBack: () => void;
@@ -13,6 +14,7 @@ interface CreatePostFormProps {
 }
 
 const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -35,9 +37,9 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
   ];
 
   const categories = {
-    personne: ["Adulte", "Enfant", "Personne âgée"],
-    objet: ["Téléphone", "Clés", "Portefeuille", "Bijoux", "Documents", "Véhicule", "Autre"],
-    animal: ["Chat", "Chien", "Oiseau", "Autre"]
+    personne: ["adulte", "enfant", "personneAgee"],
+    objet: ["telephone", "cles", "portefeuille", "bijoux", "documents", "vehicule", "autre"],
+    animal: ["chat", "chien", "oiseau", "autre"]
   };
 
   // Helper: Validate phone number (must be 8 digits, start with 2, 3, or 4)
@@ -56,15 +58,15 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
   };
 
   const validateForm = () => {
-    if (!formData.type) return "Type de signalement requis.";
-    if (!formData.category) return "Catégorie requise.";
-    if (!formData.title.trim()) return "Titre requis.";
-    if (!formData.description.trim()) return "Description requise.";
-    if (!formData.location) return "Ville requise.";
-    if (!formData.contactName.trim()) return "Nom du contact requis.";
-    if (!formData.contactPhone.trim()) return "Numéro de téléphone requis.";
-    if (!isValidPhone(formData.contactPhone)) return "Numéro de téléphone invalide : doit comporter 8 chiffres et commencer par 2, 3 ou 4.";
-    if (formData.dateTime && !isValidDate(formData.dateTime)) return "La date ne peut pas être dans le futur (précision à la minute).";
+    if (!formData.type) return t("form.errors.typeRequired");
+    if (!formData.category) return t("form.errors.categoryRequired");
+    if (!formData.title.trim()) return t("form.errors.titleRequired");
+    if (!formData.description.trim()) return t("form.errors.descriptionRequired");
+    if (!formData.location) return t("form.errors.locationRequired");
+    if (!formData.contactName.trim()) return t("form.errors.contactNameRequired");
+    if (!formData.contactPhone.trim()) return t("form.errors.contactPhoneRequired");
+    if (!isValidPhone(formData.contactPhone)) return t("form.errors.phoneInvalid");
+    if (formData.dateTime && !isValidDate(formData.dateTime)) return t("form.errors.dateFuture");
     return null;
   };
 
@@ -145,7 +147,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
     <div className="max-w-2xl mx-auto px-4 py-8">
       <Card className="shadow-xl border-2 border-blue-100 bg-white/80 backdrop-blur-md">
         <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-xl p-6">
-          <CardTitle className="text-3xl text-center text-white font-bold tracking-wide drop-shadow-lg">Créer un signalement</CardTitle>
+          <CardTitle className="text-3xl text-center text-white font-bold tracking-wide drop-shadow-lg">{t('form.formTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="p-8">
           {formError && (
@@ -156,28 +158,28 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2">Type de signalement *</label>
+                <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.typeLabel')} {t('form.required')}</label>
                 <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value, category: "" })}>
                   <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
-                    <SelectValue placeholder="Sélectionner un type" />
+                    <SelectValue placeholder={t('form.typePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="personne">Personne</SelectItem>
-                    <SelectItem value="objet">Objet</SelectItem>
-                    <SelectItem value="animal">Animal</SelectItem>
+                    <SelectItem value="personne">{t('form.categories.personne')}</SelectItem>
+                    <SelectItem value="objet">{t('form.categories.objet')}</SelectItem>
+                    <SelectItem value="animal">{t('form.categories.animal')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               {formData.type && (
                 <div>
-                  <label className="block text-base font-semibold text-blue-700 mb-2">Catégorie *</label>
+                  <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.category')} {t('form.required')}</label>
                   <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                     <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
-                      <SelectValue placeholder="Sélectionner une catégorie" />
+                      <SelectValue placeholder={t('form.categoryPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories[formData.type as keyof typeof categories]?.map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        <SelectItem key={cat} value={cat}>{t(`form.subCategories.${cat}`)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -185,19 +187,19 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
               )}
             </div>
             <div>
-              <label className="block text-base font-semibold text-blue-700 mb-2">Titre *</label>
-              <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder="Titre du signalement" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+              <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.title')} {t('form.required')}</label>
+              <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder={t('form.titlePlaceholder')} value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
             </div>
             <div>
-              <label className="block text-base font-semibold text-blue-700 mb-2">Description *</label>
-              <Textarea className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder="Description détaillée" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={4} />
+              <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.description')} {t('form.required')}</label>
+              <Textarea className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder={t('form.descriptionPlaceholder')} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={4} />
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><MapPin className="inline-block mr-1 h-4 w-4 text-blue-400" />Ville *</label>
+                <label className="block text-base font-semibold text-blue-700 mb-2"><MapPin className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.location')} {t('form.required')}</label>
                 <Select value={formData.location} onValueChange={(value) => setFormData({ ...formData, location: value })}>
                   <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
-                    <SelectValue placeholder="Sélectionner une ville" />
+                    <SelectValue placeholder={t('form.locationPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {mauritanianCities.map((city) => (
@@ -207,50 +209,50 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 </Select>
               </div>
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><Calendar className="inline-block mr-1 h-4 w-4 text-blue-400" />Date</label>
+                <label className="block text-base font-semibold text-blue-700 mb-2"><Calendar className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.date')}</label>
                 <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" type="datetime-local" value={formData.dateTime} onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })} />
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2">Status *</label>
+                <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.status')} {t('form.required')}</label>
                 <Select value={formData.status} onValueChange={(value: 'lost' | 'found') => setFormData({ ...formData, status: value })}>
                   <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
-                    <SelectValue placeholder="Sélectionner le status" />
+                    <SelectValue placeholder={t('form.statusPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="lost">Perdu</SelectItem>
-                    <SelectItem value="found">Trouvé</SelectItem>
+                    <SelectItem value="lost">{t('status.lost')}</SelectItem>
+                    <SelectItem value="found">{t('status.found')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />Nom du contact *</label>
-                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder="Nom complet" value={formData.contactName} onChange={(e) => setFormData({ ...formData, contactName: e.target.value })} required />
+                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.contactName')} {t('form.required')}</label>
+                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder={t('form.contactNamePlaceholder')} value={formData.contactName} onChange={(e) => setFormData({ ...formData, contactName: e.target.value })} required />
               </div>
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />Numéro de téléphone *</label>
-                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" type="tel" placeholder="Numéro de téléphone" value={formData.contactPhone} onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })} required />
+                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.contactPhone')} {t('form.required')}</label>
+                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" type="tel" placeholder={t('form.contactPhonePlaceholder')} value={formData.contactPhone} onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })} required />
               </div>
             </div>
             <div>
               <label className="block text-base font-semibold text-blue-700 mb-2 flex items-center gap-2">
                 <ImagePlus className="inline-block h-5 w-5 text-blue-400" />
-                Add Images
+                {t('form.imagesAdd')}
               </label>
-              <div className="text-sm text-gray-600 mb-4">Upload clear photos of your item. The first image will be the main photo.</div>
+              <div className="text-sm text-gray-600 mb-4">{t('form.imagesDescription')}</div>
               {/* Main image upload area */}
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 mb-6 min-h-[220px] relative group transition hover:border-blue-400">
                 {imagePreviews.length === 0 ? (
                   <>
                     <div className="flex flex-col items-center justify-center">
                       <ImagePlus className="h-12 w-12 text-gray-300 mb-4" />
-                      <div className="text-gray-700 font-medium text-center mb-1">Drag and drop or click to upload</div>
-                      <div className="text-xs text-gray-400 mb-4">This will be your primary photo</div>
+                      <div className="text-gray-700 font-medium text-center mb-1">{t('form.imagesDragDrop')}</div>
+                      <div className="text-xs text-gray-400 mb-4">{t('form.imagesPrimary')}</div>
                       <label htmlFor="main-image-upload" className="inline-block cursor-pointer">
-                        <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">Browse Files</span>
+                        <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">{t('form.imagesBrowseFiles')}</span>
                         <Input id="main-image-upload" type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                       </label>
                     </div>
@@ -263,16 +265,16 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                         <X className="h-5 w-5" />
                       </button>
                     </div>
-                    <div className="text-xs text-blue-500 font-medium mb-2">This is your primary photo</div>
+                    <div className="text-xs text-blue-500 font-medium mb-2">{t('form.imagesCurrentPrimary')}</div>
                     <label htmlFor="main-image-upload" className="inline-block cursor-pointer">
-                      <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">Browse Files</span>
+                      <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">{t('form.imagesBrowseFiles')}</span>
                       <Input id="main-image-upload" type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                     </label>
                   </div>
                 )}
               </div>
               {/* Additional images grid */}
-              <div className="mb-2 text-base font-semibold text-blue-700">Images supplémentaires</div>
+              <div className="mb-2 text-base font-semibold text-blue-700">{t('form.imagesAdditional')}</div>
               <div className="flex gap-4">
                 {[0,1,2,3].map((i) => (
                   <div key={i} className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-white relative overflow-hidden">
@@ -296,8 +298,8 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
               </div>
             </div>
             <div className="flex justify-between pt-8">
-              <Button type="button" variant="outline" onClick={onBack} className="rounded-lg px-6 py-2 text-blue-700 border-blue-400 hover:bg-blue-50">Retour</Button>
-              <Button type="submit" className="rounded-lg px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-blue-500">Publier</Button>
+              <Button type="button" variant="outline" onClick={onBack} className="rounded-lg px-6 py-2 text-blue-700 border-blue-400 hover:bg-blue-50">{t('form.backButton')}</Button>
+              <Button type="submit" className="rounded-lg px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-blue-500">{t('form.publishButton')}</Button>
             </div>
           </form>
         </CardContent>

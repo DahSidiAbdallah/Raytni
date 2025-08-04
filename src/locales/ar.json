@@ -18,25 +18,86 @@
         "success": "تم نشر البلاغ!",
         "error": "حدث خطأ أثناء النشر."
       }
+    },
+    "police": {
+      "title": "مراكز الشرطة",
+      "backLink": "← العودة إلى الرئيسية",
+      "locationError": "تعذر الحصول على موقعك. عرض بالترتيب الأبجدي.",
+      "loadingLocation": "جارٍ تحديد الموقع...",
+      "showingNearestFirst": "عرض أقرب مراكز الشرطة أولاً",
+      "getDirections": "الاتجاهات"
     }
   },
   "form": {
+    "formTitle": "إنشاء بلاغ",
     "title": "العنوان",
+    "titlePlaceholder": "عنوان البلاغ",
     "description": "الوصف",
+    "descriptionPlaceholder": "وصف مفصل",
     "category": "الفئة",
+    "categoryPlaceholder": "اختر فئة",
     "type": "النوع",
+    "typeLabel": "نوع البلاغ",
+    "typePlaceholder": "اختر نوعاً",
     "location": "المدينة",
+    "locationPlaceholder": "اختر مدينة",
     "date": "التاريخ",
     "status": "الحالة",
+    "statusPlaceholder": "اختر الحالة",
     "contactName": "اسم جهة الاتصال",
+    "contactNamePlaceholder": "الاسم الكامل",
     "contactPhone": "رقم الهاتف",
-    "images": "الصور"
+    "contactPhonePlaceholder": "رقم الهاتف",
+    "images": "الصور",
+    "imagesAdd": "إضافة صور",
+    "imagesDescription": "ارفع صوراً واضحة لعنصرك. الصورة الأولى ستكون الصورة الرئيسية.",
+    "imagesDragDrop": "اسحب وأفلت أو انقر للرفع",
+    "imagesPrimary": "هذه ستكون صورتك الرئيسية",
+    "imagesCurrentPrimary": "هذه هي صورتك الرئيسية",
+    "imagesBrowseFiles": "تصفح الملفات",
+    "imagesAdditional": "صور إضافية",
+    "required": "*",
+    "backButton": "رجوع",
+    "publishButton": "نشر",
+    "errors": {
+      "typeRequired": "نوع البلاغ مطلوب.",
+      "categoryRequired": "الفئة مطلوبة.",
+      "titleRequired": "العنوان مطلوب.",
+      "descriptionRequired": "الوصف مطلوب.",
+      "locationRequired": "المدينة مطلوبة.",
+      "contactNameRequired": "اسم جهة الاتصال مطلوب.",
+      "contactPhoneRequired": "رقم الهاتف مطلوب.",
+      "phoneInvalid": "رقم الهاتف غير صحيح: يجب أن يكون 8 أرقام ويبدأ بـ 2 أو 3 أو 4.",
+      "dateFuture": "لا يمكن أن يكون التاريخ في المستقبل (بدقة الدقيقة)."
+    },
+    "categories": {
+      "personne": "شخص",
+      "objet": "شيء",
+      "animal": "حيوان"
+    },
+    "subCategories": {
+      "adulte": "بالغ",
+      "enfant": "طفل",
+      "personneAgee": "شخص مسن",
+      "telephone": "هاتف",
+      "cles": "مفاتيح",
+      "portefeuille": "محفظة",
+      "bijoux": "مجوهرات",
+      "documents": "وثائق",
+      "vehicule": "مركبة",
+      "autre": "أخرى",
+      "chat": "قطة",
+      "chien": "كلب",
+      "oiseau": "طائر"
+    }
   },
   "status": {
     "lost": "مفقود",
     "found": "تم العثور عليه"
   },
   "home": {
+    "title": "لنجد ما",
+    "titleHighlight": "يهم",
     "recentPosts": "البلاغات الأخيرة",
     "recentPosts.subtitle": "اكتشف أحدث بلاغات المجتمع",
     "noPosts": "لا توجد بلاغات في الوقت الحالي",
@@ -52,5 +113,55 @@
   "error": {
     "fetchPosts": "خطأ في تحميل البلاغات",
     "tryAgain": "يرجى المحاولة مرة أخرى لاحقاً"
+  },
+  "browse": {
+    "title": "تصفح البلاغات",
+    "searchPlaceholder": "البحث بالعنوان، الوصف...",
+    "filters": "المرشحات",
+    "showFilters": "إظهار المرشحات",
+    "hideFilters": "إخفاء المرشحات",
+    "clearFilters": "مسح المرشحات",
+    "filterByType": "ترشيح حسب النوع",
+    "filterByStatus": "ترشيح حسب الحالة",
+    "filterByLocation": "ترشيح حسب المدينة",
+    "allTypes": "جميع الأنواع",
+    "allStatuses": "جميع الحالات",
+    "allLocations": "جميع المدن",
+    "noResults": "لم يتم العثور على بلاغات",
+    "noResultsDescription": "حاول تعديل معايير البحث",
+    "activeFilters": "المرشحات النشطة",
+    "seeMore": "عرض المزيد",
+    "seeLess": "عرض أقل",
+    "statusLost": "مفقود",
+    "statusFound": "تم العثور عليه"
+  },
+  "footer": {
+    "description": "منصة مجتمعية للعثور على ما يهم أكثر في موريتانيا.",
+    "quickLinks": "روابط سريعة",
+    "reportMissing": "الإبلاغ عن اختفاء",
+    "browseReports": "تصفح البلاغات",
+    "safetyTips": "نصائح السلامة",
+    "contact": "اتصل بنا",
+    "contactDescription": "لأي أسئلة أو مساعدة، اتصل بفريقنا.",
+    "madeWithLove": "صُنع بـ",
+    "forCommunity": "للمجتمع الموريتاني"
+  },
+  "police": {
+    "back": "رجوع",
+    "title": "مراكز الشرطة",
+    "description": "اعثر على أقرب مركز شرطة إلى موقعك",
+    "sortByProximity": "ترتيب حسب القرب",
+    "requesting": "طلب الموقع...",
+    "granted": "تم منح إذن الموقع",
+    "denied": "تم رفض إذن الموقع",
+    "unavailable": "تحديد الموقع غير متوفر",
+    "locationDenied": "تم رفض الوصول إلى الموقع. للتفعيل:\n\n1. انقر على أيقونة القفل في شريط العناوين\n2. اختر 'السماح' لتحديد الموقع\n3. أعد تحميل الصفحة\n\nأو امسح بيانات الموقع في إعدادات المتصفح.",
+    "locationUnavailable": "لا يمكن تحديد موقعك. تحقق من اتصال GPS.",
+    "locationTimeout": "انتهت مهلة طلب الموقع. يرجى المحاولة مرة أخرى.",
+    "locationError": "خطأ في الوصول إلى الموقع.",
+    "locationNotSupported": "تحديد الموقع غير مدعوم في متصفحك.",
+    "resetPermissions": "إعادة تعيين الأذونات",
+    "permissionHelp": "مساعدة في الأذونات",
+    "manualLocation": "إدخال العنوان يدوياً"
   }
 }

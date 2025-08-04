@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { getCurrentPosition } from '@/services/locationService';
 import LeafletMap from '@/components/LeafletMap';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Example commissariats data
 interface Commissariat {
@@ -132,6 +133,7 @@ const commissariats: Commissariat[] = [
 // }
 
 export default function PolicePage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [sortByProximity, setSortByProximity] = useState(false);
@@ -166,6 +168,47 @@ export default function PolicePage() {
     checkPermissionStatus();
   }, []);
 
+  // Helper function to show detailed permission help
+  const showPermissionHelp = () => {
+    const userAgent = navigator.userAgent;
+    let instructions = '';
+    
+    if (userAgent.includes('Chrome')) {
+      instructions = `Chrome:
+1. Cliquez sur l'icône de cadenas/site à gauche de l'URL
+2. Sélectionnez "Site settings" ou "Paramètres du site"
+3. Changez "Location" de "Block" à "Allow"
+4. Rechargez la page
+
+Alternative:
+- Tapez chrome://settings/content/location dans la barre d'adresse
+- Supprimez ce site de la liste "Block"`;
+    } else if (userAgent.includes('Firefox')) {
+      instructions = `Firefox:
+1. Cliquez sur l'icône de cadenas à gauche de l'URL
+2. Cliquez sur "Connection secure" puis "More information"
+3. Allez à l'onglet "Permissions"
+4. Changez "Access your location" à "Allow"
+5. Rechargez la page`;
+    } else if (userAgent.includes('Safari')) {
+      instructions = `Safari:
+1. Menu Safari > Preferences > Websites
+2. Sélectionnez "Location" dans la barre latérale
+3. Changez ce site à "Allow"
+4. Rechargez la page`;
+    } else {
+      instructions = `Étapes générales:
+1. Cherchez l'icône de cadenas/site dans la barre d'adresse
+2. Cliquez dessus et trouvez les paramètres de localisation
+3. Changez de "Bloquer" à "Autoriser"
+4. Rechargez la page
+
+Si cela ne fonctionne pas, effacez les données du site dans les paramètres du navigateur.`;
+    }
+    
+    alert(instructions);
+  };
+
   useEffect(() => {
     // Use the direct approach that we know works
     console.log('Police component mounted, requesting location...');
@@ -184,6 +227,29 @@ export default function PolicePage() {
         (error) => {
           console.error('Location request failed:', error);
           setLocationStatus('denied');
+          
+          // Provide specific error messages based on error type
+          let errorMessage = '';
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = t('police.locationDenied');
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = t('police.locationUnavailable');
+              break;
+            case error.TIMEOUT:
+              errorMessage = t('police.locationTimeout');
+              break;
+            default:
+              errorMessage = t('police.locationError');
+              break;
+          }
+          
+          // Show a more helpful dialog with actionable steps
+          if (confirm(`${errorMessage}\n\n${t('police.permissionHelp')}?`)) {
+            // Open browser help or show detailed instructions
+            showPermissionHelp();
+          }
         },
         {
           enableHighAccuracy: false,
@@ -279,6 +345,27 @@ export default function PolicePage() {
             console.error('Error getting location for sorting:', error);
             setLocationStatus('denied');
             setSortByProximity(false);
+            
+            // Show user-friendly error message
+            let errorMessage = '';
+            switch(error.code) {
+              case error.PERMISSION_DENIED:
+                errorMessage = t('police.locationDenied');
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMessage = t('police.locationUnavailable');
+                break;
+              case error.TIMEOUT:
+                errorMessage = t('police.locationTimeout');
+                break;
+              default:
+                errorMessage = t('police.locationError');
+                break;
+            }
+            
+            if (confirm(`${errorMessage}\n\n${t('police.permissionHelp')}?`)) {
+              showPermissionHelp();
+            }
           },
           {
             enableHighAccuracy: false,
@@ -400,7 +487,25 @@ export default function PolicePage() {
           )}
           {locationStatus === 'denied' && (
             <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-md">
-              ⚠️ Localisation refusée. Si vous avez autorisé la localisation dans votre navigateur, cliquez sur "Trier par Proximité" pour réessayer.
+              <div className="flex items-center justify-between">
+                <div>
+                  ⚠️ {t('police.denied')}. {t('police.locationDenied')}
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <button
+                    onClick={showPermissionHelp}
+                    className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {t('police.permissionHelp')}
+                  </button>
+                  <button
+                    onClick={handleSortByProximity}
+                    className="px-3 py-1 text-xs font-medium text-amber-600 bg-amber-100 rounded hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  >
+                    {t('police.resetPermissions')}
+                  </button>
+                </div>
+              </div>
               <button 
                 onClick={() => {
                   setLocationStatus('requesting');

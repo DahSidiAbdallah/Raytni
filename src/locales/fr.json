@@ -18,25 +18,85 @@
         "success": "Signalement publié !",
         "error": "Erreur lors de la publication."
       }
+    },
+    "police": {
+      "title": "Commissariats de Police",
+      "backLink": "← Retour à l'accueil",
+      "locationError": "Impossible d'obtenir votre position. Affichage par ordre alphabétique.",
+      "loadingLocation": "Localisation en cours...",
+      "showingNearestFirst": "Affichage des commissariats les plus proches en premier",
+      "getDirections": "Itinéraire"
     }
   },
   "form": {
+    "formTitle": "Créer un signalement",
     "title": "Titre",
+    "titlePlaceholder": "Titre du signalement",
     "description": "Description",
+    "descriptionPlaceholder": "Description détaillée",
     "category": "Catégorie",
+    "categoryPlaceholder": "Sélectionner une catégorie",
     "type": "Type",
+    "typeLabel": "Type de signalement",
+    "typePlaceholder": "Sélectionner un type",
     "location": "Ville",
+    "locationPlaceholder": "Sélectionner une ville",
     "date": "Date",
     "status": "Statut",
+    "statusPlaceholder": "Sélectionner le status",
     "contactName": "Nom du contact",
+    "contactNamePlaceholder": "Nom complet",
     "contactPhone": "Numéro de téléphone",
-    "images": "Images"
+    "contactPhonePlaceholder": "Numéro de téléphone",
+    "subCategories": {
+      "adulte": "Adulte",
+      "enfant": "Enfant",
+      "personneAgee": "Personne âgée",
+      "telephone": "Téléphone",
+      "cles": "Clés",
+      "portefeuille": "Portefeuille",
+      "bijoux": "Bijoux",
+      "documents": "Documents",
+      "vehicule": "Véhicule",
+      "autre": "Autre",
+      "chat": "Chat",
+      "chien": "Chien",
+      "oiseau": "Oiseau"
+    },
+    "imagesAdd": "Ajouter des images",
+    "imagesDescription": "Téléchargez des photos claires de votre objet. La première image sera la photo principale.",
+    "imagesDragDrop": "Glissez-déposez ou cliquez pour télécharger",
+    "imagesPrimary": "Ceci sera votre photo principale",
+    "imagesCurrentPrimary": "Ceci est votre photo principale",
+    "imagesBrowseFiles": "Parcourir les fichiers",
+    "imagesAdditional": "Images supplémentaires",
+    "required": "*",
+    "backButton": "Retour",
+    "publishButton": "Publier",
+    "errors": {
+      "typeRequired": "Type de signalement requis.",
+      "categoryRequired": "Catégorie requise.",
+      "titleRequired": "Titre requis.",
+      "descriptionRequired": "Description requise.",
+      "locationRequired": "Ville requise.",
+      "contactNameRequired": "Nom du contact requis.",
+      "contactPhoneRequired": "Numéro de téléphone requis.",
+      "phoneInvalid": "Numéro de téléphone invalide : doit comporter 8 chiffres et commencer par 2, 3 ou 4.",
+      "dateFuture": "La date ne peut pas être dans le futur (précision à la minute)."
+    },
+    "categories": {
+      "personne": "Personne",
+      "objet": "Objet",
+      "animal": "Animal"
+    }
   },
   "status": {
     "lost": "Perdu",
     "found": "Trouvé"
   },
   "home": {
+    "title": "Retrouvons ce qui",
+    "titleHighlight": "compte",
     "recentPosts": "Signalements récents",
     "recentPosts.subtitle": "Découvrez les derniers signalements de la communauté",
     "noPosts": "Aucun signalement pour le moment",
@@ -52,5 +112,55 @@
   "error": {
     "fetchPosts": "Erreur lors du chargement des signalements",
     "tryAgain": "Veuillez réessayer plus tard"
+  },
+  "browse": {
+    "title": "Parcourir les signalements",
+    "searchPlaceholder": "Rechercher par titre, description...",
+    "filters": "Filtres",
+    "showFilters": "Afficher les filtres",
+    "hideFilters": "Masquer les filtres",
+    "clearFilters": "Effacer les filtres",
+    "filterByType": "Filtrer par type",
+    "filterByStatus": "Filtrer par statut",
+    "filterByLocation": "Filtrer par ville",
+    "allTypes": "Tous les types",
+    "allStatuses": "Tous les statuts",
+    "allLocations": "Toutes les villes",
+    "noResults": "Aucun signalement trouvé",
+    "noResultsDescription": "Essayez de modifier vos critères de recherche",
+    "activeFilters": "Filtres actifs",
+    "seeMore": "Voir plus",
+    "seeLess": "Voir moins",
+    "statusLost": "PERDU",
+    "statusFound": "TROUVÉ"
+  },
+  "footer": {
+    "description": "Plateforme communautaire pour retrouver ce qui compte le plus en Mauritanie.",
+    "quickLinks": "Liens rapides",
+    "reportMissing": "Signaler une disparition",
+    "browseReports": "Parcourir les signalements",
+    "safetyTips": "Conseils de sécurité",
+    "contact": "Contact",
+    "contactDescription": "Pour toute question ou assistance, contactez notre équipe.",
+    "madeWithLove": "Fait avec",
+    "forCommunity": "pour la communauté mauritanienne"
+  },
+  "police": {
+    "back": "Retour",
+    "title": "Commissariats de Police",
+    "description": "Trouvez le commissariat de police le plus proche de votre position",
+    "sortByProximity": "Trier par proximité",
+    "requesting": "Demande de localisation...",
+    "granted": "Localisation autorisée",
+    "denied": "Localisation refusée",
+    "unavailable": "Géolocalisation non disponible",
+    "locationDenied": "L'accès à la localisation a été refusé. Pour activer:\n\n1. Cliquez sur l'icône de cadenas dans la barre d'adresse\n2. Sélectionnez 'Autoriser' pour la localisation\n3. Rechargez la page\n\nOu effacez les données du site dans les paramètres du navigateur.",
+    "locationUnavailable": "Votre position n'a pas pu être déterminée. Vérifiez votre connexion GPS.",
+    "locationTimeout": "La demande de localisation a expiré. Veuillez réessayer.",
+    "locationError": "Erreur lors de l'accès à la localisation.",
+    "locationNotSupported": "La géolocalisation n'est pas supportée par votre navigateur.",
+    "resetPermissions": "Réinitialiser les permissions",
+    "permissionHelp": "Aide avec les permissions",
+    "manualLocation": "Saisir une adresse manuellement"
   }
 }

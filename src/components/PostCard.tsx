@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Post {
   id: string;
@@ -27,6 +28,7 @@ interface PostCardProps {
 }
 
 const PostCard = ({ post }: PostCardProps) => {
+  const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
 
@@ -76,7 +78,7 @@ const PostCard = ({ post }: PostCardProps) => {
               {getTypeIcon(post.type)}
             </div>
             <Badge className={`${getStatusColor(post.status)} text-white px-3 py-1 font-medium`}>
-              {post.status === "lost" ? "PERDU" : "TROUVÉ"}
+              {post.status === "lost" ? t('browse.statusLost') : t('browse.statusFound')}
             </Badge>
           </div>
           {/* Removed date display */}
@@ -106,7 +108,7 @@ const PostCard = ({ post }: PostCardProps) => {
             className="text-blue-600 hover:text-blue-700 text-sm font-medium mb-4 flex items-center gap-1"
           >
             <Eye className="h-3 w-3" />
-            {isExpanded ? 'Voir moins' : 'Voir plus'}
+            {isExpanded ? t('browse.seeLess') : t('browse.seeMore')}
           </button>
         )}
 
