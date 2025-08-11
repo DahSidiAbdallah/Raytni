@@ -20,12 +20,41 @@
       }
     },
     "police": {
+      "back": "← Retour à l'accueil",
       "title": "Commissariats de Police",
-      "backLink": "← Retour à l'accueil",
       "locationError": "Impossible d'obtenir votre position. Affichage par ordre alphabétique.",
       "loadingLocation": "Localisation en cours...",
       "showingNearestFirst": "Affichage des commissariats les plus proches en premier",
-      "getDirections": "Itinéraire"
+      "contact": "Contact",
+      "urgent": "Pour toute urgence, composez le 117",
+      "specialServices": "Services spécialisés",
+      "emergencyNumbers": "Numéros d'urgence",
+      "emergencyPolice": "Police d'urgence",
+      "emergencyGuard": "Garde nationale",
+      "emergencyFire": "Pompiers",
+      "emergencyGendarmerie": "Gendarmerie nationale",
+      "emergencyRoad": "Sécurité routière",
+      "mapTitle": "Carte des Commissariats",
+      "mapPlaceholder": "Une carte apparaîtra ici",
+      "listTitle": "Liste des Commissariats",
+      "getDirections": "Itinéraire",
+      "requesting": "Demande de localisation..."
+    },
+    "safetyTips": {
+      "back": "← Retour à l'accueil",
+      "title": "Conseils de Sécurité",
+      "intro": "Voici quelques conseils pour assurer votre sécurité et celle de vos biens lors de l'utilisation de notre plateforme :",
+      "tipIdentity": "Vérifiez l'identité : Si vous rencontrez quelqu'un pour un objet trouvé/perdu, faites-le dans un lieu public et bien éclairé. Informez un ami ou un membre de votre famille de votre lieu de rendez-vous.",
+      "tipPersonalInfo": "Informations personnelles : Ne partagez jamais d'informations personnelles sensibles (numéro de carte d'identité, informations bancaires) via la messagerie de la plateforme.",
+      "tipSuspicious": "Méfiez-vous des offres suspectes : Soyez prudent si une offre semble trop belle pour être vraie ou si l'on vous demande de payer des frais à l'avance.",
+      "tipReports": "Signalements : Utilisez des descriptions claires et précises, mais évitez de donner des détails qui pourraient être exploités (par exemple, quand votre maison est vide).",
+      "tipPassword": "Mot de passe : Utilisez un mot de passe fort et unique pour votre compte sur la plateforme.",
+      "tipPolice": "Contacter la police : Pour les objets de grande valeur ou les situations suspectes, n'hésitez pas à contacter les autorités compétentes.",
+      "footer": "Votre sécurité est notre priorité. Soyez vigilant et utilisez la plateforme de manière responsable."
+    },
+    "notFound": {
+      "message": "Oups ! Page introuvable",
+      "return": "Retour à l'accueil"
     }
   },
   "form": {
