@@ -115,7 +115,7 @@ const PostCard = ({ post }: PostCardProps) => {
         <div className="space-y-3 mb-6">
           <div className="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg">
             <MapPin className="h-4 w-4 mr-3 text-blue-600 flex-shrink-0" />
-            <span className="font-medium">{post.location}</span>
+            <span className="font-medium">{t('Postcard.location')}: {post.location}</span>
           </div>
           {/* Removed date and contactName from card */}
         </div>
@@ -125,7 +125,7 @@ const PostCard = ({ post }: PostCardProps) => {
           onClick={e => { e.stopPropagation(); window.open(`tel:${post.contactPhone}`, '_self'); }}
         >
           <Phone className="h-4 w-4 mr-2" />
-          <span className="font-medium">Contacter: {post.contactPhone}</span>
+          <span className="font-medium">{t('Postcard.actions.contact')}: {post.contactPhone}</span>
           <ExternalLink className="h-3 w-3 ml-2" />
         </Button>
       </CardContent>

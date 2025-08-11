@@ -162,5 +162,21 @@
     "resetPermissions": "Réinitialiser les permissions",
     "permissionHelp": "Aide avec les permissions",
     "manualLocation": "Saisir une adresse manuellement"
+  },
+
+  "Postcard": {
+    "title": "Titre du signalement",
+    "description": "Description du signalement",
+    "location": "Emplacement",
+    "date": "Date",
+    "status": "Statut",
+    "contact": "Contact",
+    "actions": {
+      "view": "Voir",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "contact": "Contacter"
+
+    }
   }
 }

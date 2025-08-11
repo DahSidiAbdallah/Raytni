@@ -163,5 +163,24 @@
     "resetPermissions": "إعادة تعيين الأذونات",
     "permissionHelp": "مساعدة في الأذونات",
     "manualLocation": "إدخال العنوان يدوياً"
+
+
+  },
+
+  "Postcard": {
+    "title": "عنوان البلاغ",
+    "description": "وصف البلاغ",
+    "location": "الموقع",
+    "date": "التاريخ",
+    "status": "الحالة",
+    "contact": "جهة الاتصال",
+    "actions": {
+      "view": "عرض",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "contact": "تواصل"
+    }
   }
+
 }
+
