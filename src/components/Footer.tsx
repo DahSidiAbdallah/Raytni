@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
-  const { t } = useLanguage();
-  
+  const { t, currentLanguage } = useLanguage();
+  const isRTL = currentLanguage === 'ar';
   return (
-    <footer className="bg-gray-900 text-white py-12 mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-3 gap-8">
+    <footer className={`bg-gray-900 text-white py-12 mt-20 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${isRTL ? 'text-right' : ''}`}>
+        <div className="grid md:grid-cols-3 gap-8"> 
           <div>
             <div className="flex items-center mb-4">
               <img src="/footer.png" alt="Logo" className="h-16 w-16" />

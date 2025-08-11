@@ -87,12 +87,14 @@ const CreatePostPage = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <CreatePostForm 
-        onBack={() => navigate(-1)} 
-        onSubmit={handlePostSubmit} 
-      />
-    </div>
+    <MainLayout>
+      <div className="container mx-auto py-8">
+        <CreatePostForm 
+          onBack={() => navigate(-1)} 
+          onSubmit={handlePostSubmit} 
+        />
+      </div>
+    </MainLayout>
   );
 };
 

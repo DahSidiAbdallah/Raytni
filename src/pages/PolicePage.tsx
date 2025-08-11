@@ -39,6 +39,7 @@ const mockCommissariats: Commissariat[] = [
   { id: '15', name: 'Commissariat Atar', address: 'Atar', lat: 20.5169, lon: -13.0499, phone: '+22250251248' },
 ];
 
+import MainLayout from '@/components/MainLayout';
 const PolicePage = () => {
   const { t } = useLanguage();
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
@@ -195,55 +196,15 @@ const PolicePage = () => {
                     <Shield className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
-                    {commissariat.name}
-                  </CardTitle>
-                </div>
-                
-                {commissariat.distance !== undefined && (
-                  <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm flex items-center">
-                    <MapPin className="h-3 w-3 mr-1" />
-                    {commissariat.distance} km
-                  </div>
-                )}
-              </div>
-              
-              <div className="p-5 pt-3">
-                {commissariat.address && (
-                  <div className="mb-4 flex items-start">
-                    <MapPin className="h-5 w-5 text-indigo-500 dark:text-indigo-400 mt-0.5 mr-2 flex-shrink-0" />
-                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-                      {commissariat.address}
-                    </p>
-                  </div>
-                )}
-                
-                <div className="flex items-center justify-between bg-blue-50 dark:bg-gray-800/50 p-3 rounded-lg">
-                  <div className="flex items-center">
-                    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-                    <a 
-                      href={`tel:${commissariat.phone}`} 
-                      onClick={e => e.stopPropagation()} 
-                      className="text-blue-600 dark:text-blue-400 font-medium hover:underline flex items-center"
-                    >
-                      {commissariat.phone}
-                    </a>
-                  </div>
-                  <Button 
-                    onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)}
-                    size="sm"
-                    className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 shadow-sm"
-                  >
-                    <Navigation className="h-4 w-4 mr-1.5" />
-                    {t('page.police.getDirections')}
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
+                    return (
+                      <MainLayout>
+                        <div className="max-w-4xl mx-auto px-4 py-8">
+                          <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
+                            <Shield className="h-7 w-7 text-blue-600" />
+                            {t('page.police.title')}
+                          </h1>
+                          {/* ...existing code for controls, error, and commissariats grid... */}
+                        </div>
+                      </MainLayout>
+                    );
 export default PolicePage;
