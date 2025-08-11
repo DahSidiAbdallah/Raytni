@@ -92,7 +92,8 @@
     text-align: right;
   }
 
-  [dir="rtl"] .flex {
+  /* Reverse only row-based flex layouts in RTL to avoid breaking vertical stacks */
+  [dir="rtl"] .flex:not(.flex-col):not(.flex-col-reverse) {
     flex-direction: row-reverse;
   }
 
@@ -168,7 +169,8 @@
   text-align: right;
 }
 
-[dir="rtl"] .flex {
+/* Reverse only row-based flex layouts in RTL to avoid breaking vertical stacks */
+[dir="rtl"] .flex:not(.flex-col):not(.flex-col-reverse) {
   flex-direction: row-reverse;
 }
 
