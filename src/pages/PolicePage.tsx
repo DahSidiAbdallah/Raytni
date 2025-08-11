@@ -41,7 +41,8 @@ const mockCommissariats: Commissariat[] = [
 
 import MainLayout from '@/components/MainLayout';
 const PolicePage = () => {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
+  const isRTL = currentLanguage === 'ar';
   const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [sortedCommissariats, setSortedCommissariats] = useState<Commissariat[]>([]);
@@ -128,83 +129,167 @@ const PolicePage = () => {
     }
   };
 
+
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-6">
+    <div className={`container mx-auto py-8 px-4 ${isRTL ? 'text-right' : ''}`}>
+      <div className={`mb-6 ${isRTL ? 'flex flex-row-reverse justify-end' : ''}`}>
         <Link to="/" className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 ease-in-out">
-          {t('page.police.backLink')}
+          {t('page.police.back')}
         </Link>
       </div>
-        
-        <Card className="shadow-lg mb-8">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
-              <Shield className="h-8 w-8 mr-3 text-indigo-600" />
-              {t('page.police.title')}
-            </CardTitle>
-            
+
+      {/* Police Info Section */}
+      <Card className="mb-8">
+        <CardContent>
+          <div className={`flex flex-col gap-2 items-center ${isRTL ? 'text-right' : 'text-left'}`}> 
+            <h2 className="text-2xl font-bold mb-2">{t('page.police.title')}</h2>
+            <div className="flex flex-wrap justify-center gap-6 w-full">
+              <div>
+                <div className="font-semibold">{t('page.police.contact')}</div>
+                <div>police@interieur.gov.mr</div>
+                <div className="text-xs text-gray-500">{t('page.police.urgent')}</div>
+              </div>
+              <div>
+                <div className="font-semibold">{t('page.police.specialServices')}</div>
+                <div>{t('page.police.emergencyGendarmerie')} - 45253990<br/>{t('page.police.emergencyGuard')} - 45252158<br/>{t('page.police.emergencyPolice')} - 4525219<br/>{t('page.police.emergencyRoad')} - 45255449</div>
+              </div>
+              <div>
+                <div className="font-semibold">{t('page.police.emergencyNumbers')}</div>
+                <div className="text-green-700">{t('page.police.emergencyPolice')} - 117</div>
+                <div className="text-blue-700">{t('page.police.emergencyGuard')} - 102</div>
+                <div className="text-red-700">{t('page.police.emergencyFire')} - 118</div>
+                <div className="text-indigo-700">{t('page.police.emergencyGendarmerie')} - 116</div>
+                <div className="text-orange-700">{t('page.police.emergencyRoad')} - 119</div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Commissariat Map Section */}
+      <Card className="mb-8">
+        <CardContent>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-lg font-semibold mb-2">{t('page.police.mapTitle')}</h3>
             <Button 
               onClick={toggleSortByProximity}
               variant={sortByProximity ? "default" : "outline"}
               disabled={isLoadingLocation}
-              className="whitespace-nowrap"
+              className="w-fit mb-2"
             >
               {isLoadingLocation ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('page.police.loadingLocation')}
+                  <Loader2 className={`${isRTL ? 'ml-2' : 'mr-2'} h-4 w-4 animate-spin`} />
+                  {t('page.police.requesting')}
                 </>
               ) : (
-                sortByProximity ? "Trier par nom" : "Trier par proximité"
+                sortByProximity ? t('browse.title') : t('police.sortByProximity')
               )}
             </Button>
-          </CardHeader>
-          
-          <CardContent className="mt-4">
             {locationError && (
-              <div className="my-4 p-4 bg-red-100 border border-red-300 text-red-700 rounded-md flex items-center">
-                <AlertTriangle className="h-5 w-5 mr-2" />
+              <div className={`my-4 p-4 bg-yellow-100 border border-yellow-300 text-yellow-700 rounded-md flex items-center ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                <AlertTriangle className={`h-5 w-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                 <p>{locationError}</p>
               </div>
             )}
-            
-            {userLocation && sortByProximity && (
-              <p className="text-sm text-gray-600 mb-4">
-                {t('page.police.showingNearestFirst')}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+            {/* Map placeholder here */}
+            <div className="w-full h-64 bg-gray-200 rounded-md flex items-center justify-center">
+              <span>{t('page.police.mapPlaceholder')}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedCommissariats.map((commissariat) => (
-            <Card 
-              key={commissariat.id} 
-              className="group flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
-            >
-              <div className="relative
-                bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900
-                p-1 flex items-center justify-center h-32 overflow-hidden
-                bg-[radial-gradient(theme(colors.blue.100)_1px,transparent_1px)]
-                dark:bg-[radial-gradient(theme(colors.gray.700)_1px,transparent_1px)]
-                bg-[length:20px_20px]"
+      {/* Commissariat List Section */}
+      <Card>
+        <CardContent>
+          <h3 className="text-lg font-semibold mb-4">{t('page.police.listTitle')}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedCommissariats.map((commissariat) => (
+              <Card 
+                key={commissariat.id} 
+                className="group flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
               >
-                <div className="absolute inset-0 bg-white/30 dark:bg-black/20 backdrop-blur-sm" />
-                
-                <div className="relative z-10 text-center p-4">
-                  <div className="w-16 h-16 mx-auto mb-3 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-                    <Shield className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                <div className="relative bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 p-1 flex items-center justify-center h-32 overflow-hidden bg-[radial-gradient(theme(colors.blue.100)_1px,transparent_1px)] dark:bg-[radial-gradient(theme(colors.gray.700)_1px,transparent_1px)] bg-[length:20px_20px]">
+                  <div className="absolute inset-0 bg-white/30 dark:bg-black/20 backdrop-blur-sm" />
+                  <div className="relative z-10 text-center p-4">
+                    <div className="w-16 h-16 mx-auto mb-3 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+                      <Shield className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                    </div>
+                    <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
+                      {commissariat.name}
+                    </CardTitle>
+                    <div className="text-gray-600 text-sm mt-1 mb-2">
+                      {commissariat.address}
+                    </div>
+                    <div className={`flex items-center justify-center gap-2 text-blue-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <MapPin className="h-4 w-4" />
+                      <span>{t('Postcard.location')}: {commissariat.address}</span>
+                    </div>
+                    <div className={`flex items-center justify-center gap-2 text-blue-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Navigation className="h-4 w-4" />
+                      <button onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)} className="underline text-blue-700">
+                        {t('page.police.getDirections')}
+                      </button>
+                    </div>
+                    <div className={`flex items-center justify-center gap-2 text-blue-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <span>{commissariat.phone}</span>
+                    </div>
+                    {commissariat.distance !== undefined && sortByProximity && (
+                      <div className="text-xs text-gray-500 mt-1">
+                        {commissariat.distance.toFixed(2)} km
+                      </div>
+                    )}
                   </div>
-                  <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
-                    return (
-                      <MainLayout>
-                        <div className="max-w-4xl mx-auto px-4 py-8">
-                          <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
-                            <Shield className="h-7 w-7 text-blue-600" />
-                            {t('page.police.title')}
-                          </h1>
-                          {/* ...existing code for controls, error, and commissariats grid... */}
-                        </div>
-                      </MainLayout>
-                    );
+                </div>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedCommissariats.map((commissariat) => (
+          <Card 
+            key={commissariat.id} 
+            className="group flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
+          >
+            <div className="relative bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 p-1 flex items-center justify-center h-32 overflow-hidden bg-[radial-gradient(theme(colors.blue.100)_1px,transparent_1px)] dark:bg-[radial-gradient(theme(colors.gray.700)_1px,transparent_1px)] bg-[length:20px_20px]">
+              <div className="absolute inset-0 bg-white/30 dark:bg-black/20 backdrop-blur-sm" />
+              <div className="relative z-10 text-center p-4">
+                <div className="w-16 h-16 mx-auto mb-3 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+                  <Shield className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
+                  {commissariat.name}
+                </CardTitle>
+                <div className="text-gray-600 text-sm mt-1 mb-2">
+                  {commissariat.address}
+                </div>
+                <div className={`flex items-center justify-center gap-2 text-blue-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <MapPin className="h-4 w-4" />
+                  <span>{t('Postcard.location')}: {commissariat.address}</span>
+                </div>
+                <div className={`flex items-center justify-center gap-2 text-blue-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <Navigation className="h-4 w-4" />
+                  <button onClick={() => handleGetDirections(commissariat.lat, commissariat.lon)} className="underline text-blue-700">
+                    {t('page.police.getDirections')}
+                  </button>
+                </div>
+                <div className={`flex items-center justify-center gap-2 text-blue-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <span>{commissariat.phone}</span>
+                </div>
+                {commissariat.distance !== undefined && sortByProximity && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    {commissariat.distance.toFixed(2)} km
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
 export default PolicePage;

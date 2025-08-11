@@ -25,7 +25,19 @@
       "locationError": "تعذر الحصول على موقعك. عرض بالترتيب الأبجدي.",
       "loadingLocation": "جارٍ تحديد الموقع...",
       "showingNearestFirst": "عرض أقرب مراكز الشرطة أولاً",
-      "getDirections": "الاتجاهات"
+  "getDirections": "الاتجاهات",
+    "contact": "جهة الاتصال",
+    "urgent": "للطوارئ اتصل بالرقم 117",
+    "specialServices": "خدمات متخصصة",
+    "emergencyNumbers": "أرقام الطوارئ",
+    "emergencyPolice": "شرطة الطوارئ",
+    "emergencyGuard": "الحرس الوطني",
+    "emergencyFire": "المطافئ",
+    "emergencyGendarmerie": "الدرك الوطني",
+    "emergencyRoad": "أمن الطرق",
+    "mapTitle": "خريطة مراكز الشرطة",
+    "mapPlaceholder": "خريطة ستظهر هنا",
+    "listTitle": "قائمة مراكز الشرطة"
     }
   },
   "form": {
@@ -145,6 +157,9 @@
     "contactDescription": "لأي أسئلة أو مساعدة، اتصل بفريقنا.",
     "madeWithLove": "صُنع بـ",
     "forCommunity": "للمجتمع الموريتاني"
+  ,"anyQuestions": "لأي أسئلة أو مساعدة، اتصل بشرطتنا.",
+  "platformDescription": "منصة صحفية للعثور على يوم أكثر أمانًا في موريتانيا.",
+  "copyright": "© جميع الحقوق محفوظة للمجتمع الموريتاني"
   },
   "police": {
     "back": "رجوع",
@@ -162,7 +177,27 @@
     "locationNotSupported": "تحديد الموقع غير مدعوم في متصفحك.",
     "resetPermissions": "إعادة تعيين الأذونات",
     "permissionHelp": "مساعدة في الأذونات",
-    "manualLocation": "إدخال العنوان يدوياً"
+  "manualLocation": "إدخال العنوان يدوياً",
+  "contactEmail": "البريد الإلكتروني: police@interieur.gov.mr",
+  "specialServices": "خدمات متخصصة",
+  "emergencyNumbers": "أرقام الطوارئ",
+  "emergencyPolice": "الشرطة - 117",
+  "emergencyGuard": "الحرس الوطني - 102",
+  "emergencyFire": "المطافئ - 118",
+  "emergencyGendarmerie": "الدرك الوطني - 116",
+  "emergencyRoad": "سلامة الطرق - 119",
+  "gendarmerieMaritime": "الدرك البحري - 45253990",
+  "brigadeMobile": "فرقة الدرك المتنقل - 45252158",
+  "generalDirection": "الإدارة العامة للأمن - 45252159",
+  "judicialPolice": "الشرطة القضائية - 45255449",
+  "mapTitle": "خريطة مراكز الشرطة",
+  "mapPermissionDenied": "لم يتم منح إذن الموقع. يرجى تفعيل إذن الموقع للمتابعة.",
+  "mapPermissionInstructions": "1. انقر على أيقونة القفل في شريط العنوان. 2. اختر السماح للوصول إلى الموقع. 3. أعد تحميل الصفحة أو امسح بيانات الموقع في إعدادات المتصفح.",
+  "retry": "إعادة المحاولة",
+  "listTitle": "قائمة مراكز الشرطة",
+  "itinerary": "إتجاهات",
+  "commissariat": "مركز الشرطة",
+  "location": "الموقع"
 
 
   },
