@@ -32,7 +32,7 @@ const LanguageSelector = () => {
             key={lang.code}
             onClick={() => setLanguage(lang.code as any)}
             className={`flex items-center gap-2 cursor-pointer ${
-              currentLanguage === lang.code ? 'bg-blue-50 text-blue-600' : ''
+              currentLanguage === lang.code ? 'bg-primary/10 text-primary' : ''
             }`}
           >
             <span>{lang.flag}</span>

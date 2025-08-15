@@ -51,19 +51,19 @@ const PostDetailsPage = () => {
           <h2 className="text-2xl font-bold mb-2">{post.title}</h2>
           <p className="mb-4 text-gray-700">{post.description}</p>
           <div className="flex items-center gap-2 mb-4">
-            <MapPin className="h-4 w-4 text-blue-600" />
+            <MapPin className="h-4 w-4 text-primary" />
             <span>{t('Postcard.location')}: {post.locationName || post.location}</span>
           </div>
           <div className="flex items-center gap-2 mb-4">
-            <Calendar className="h-4 w-4 text-blue-600" />
+            <Calendar className="h-4 w-4 text-primary" />
             <span>{t('Postcard.date')}: {post.dateTimeLostOrFound || post.dateTime}</span>
           </div>
           <div className="flex items-center gap-2 mb-4">
-            <User className="h-4 w-4 text-blue-600" />
+            <User className="h-4 w-4 text-primary" />
             <span>{t('Postcard.contact')}: {post.contactName}</span>
           </div>
           <div className="flex items-center gap-2 mb-6">
-            <Phone className="h-4 w-4 text-blue-600" />
+            <Phone className="h-4 w-4 text-primary" />
             <span>{post.contactPhone}</span>
           </div>
 

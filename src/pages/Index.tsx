@@ -114,7 +114,7 @@ const Index = () => {
           <div className="text-center mt-16">
             <button
               onClick={handleBrowse}
-              className="bg-white text-blue-600 border-2 border-blue-500 px-8 py-4 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 hover:bg-blue-50"
+              className="bg-white text-primary border-2 border-primary px-8 py-4 rounded-xl font-medium transition-all duration-200 transform hover:shadow-md hover:translate-y-[-1px] hover:bg-primary/10"
             >
               {t('home.viewAll')}
             </button>

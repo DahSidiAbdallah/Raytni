@@ -175,7 +175,7 @@ const BrowseSection = ({ posts: initialPosts, onBack }: BrowseSectionProps) => {
             <SlidersHorizontal className="h-4 w-4 mr-2" />
             {lang === 'ar' ? 'فلاتر' : 'Filtres'}
             {hasActiveFilters && (
-              <Badge className="ml-2 bg-blue-600 text-white">
+              <Badge className="ml-2 bg-primary text-white">
                 {[searchTerm, filterType !== "all", filterStatus !== "all", filterLocation !== "all"].filter(Boolean).length}
               </Badge>
             )}
@@ -245,7 +245,7 @@ const BrowseSection = ({ posts: initialPosts, onBack }: BrowseSectionProps) => {
             <span className="font-semibold text-gray-900">{filteredPosts.length}</span> {lang === 'ar' ? 'بلاغ' : ''}{filteredPosts.length !== 1 && lang === 'ar' ? 'ات' : ''}{lang === 'ar' ? ' تم العثور عليها' : ` signalement${filteredPosts.length !== 1 ? 's' : ''} trouvé${filteredPosts.length !== 1 ? 's' : ''}`}
           </p>
           {hasActiveFilters && (
-            <Badge variant="outline" className="text-blue-600 border-blue-200">
+            <Badge variant="outline" className="text-primary border-primary/20">
               {lang === 'ar' ? 'فلاتر مفعلة' : 'Filtres actifs'}
             </Badge>
           )}
@@ -255,7 +255,7 @@ const BrowseSection = ({ posts: initialPosts, onBack }: BrowseSectionProps) => {
       {/* Loading State */}
       {isLoading && (
         <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
       )}
 

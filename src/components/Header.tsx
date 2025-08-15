@@ -53,25 +53,25 @@ const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
   };
 
   return (
-    <header className="bg-white shadow-lg border-b sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+    <header className="bg-background border-b sticky top-0 z-50 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14">
           <div className="flex items-center">
             <div className="flex-shrink-0 cursor-pointer" onClick={handleViewHome}>
               <img className="h-8 w-auto" src={Logo} alt="Logo" />
             </div>
-            <nav className="hidden md:ml-8 md:flex space-x-4">
-              <Button variant="ghost" onClick={handleViewHome} className="text-gray-700 hover:text-blue-600">
-                <Home className="mr-2 h-5 w-5"/>{t('nav.home')}
+            <nav className="hidden md:ml-8 md:flex space-x-2">
+              <Button variant="ghost" onClick={handleViewHome} className="text-foreground transition-all duration-200 hover:bg-primary/10 hover:shadow-sm">
+                <Home className="mr-2 h-4 w-4 text-primary"/>{t('nav.home')}
               </Button>
-              <Button variant="ghost" onClick={handleViewBrowse} className="text-gray-700 hover:text-blue-600">
-                <ListChecks className="mr-2 h-5 w-5"/>{t('nav.browse')}
+              <Button variant="ghost" onClick={handleViewBrowse} className="text-foreground transition-all duration-200 hover:bg-primary/10 hover:shadow-sm">
+                <ListChecks className="mr-2 h-4 w-4 text-primary"/>{t('nav.browse')}
               </Button>
-              <Button variant="ghost" onClick={handleCreatePost} className="text-gray-700 hover:text-blue-600">
-                <PlusCircle className="mr-2 h-5 w-5"/>{t('nav.report')}
+              <Button variant="ghost" onClick={handleCreatePost} className="text-foreground transition-all duration-200 hover:bg-primary/10 hover:shadow-sm">
+                <PlusCircle className="mr-2 h-4 w-4 text-primary"/>{t('nav.report')}
               </Button>
-              <Button variant="ghost" onClick={() => navigate('/police')} className="text-gray-700 hover:text-blue-600">
-                <Shield className="mr-2 h-5 w-5"/>{t('nav.police')}
+              <Button variant="ghost" onClick={() => navigate('/police')} className="text-foreground transition-all duration-200 hover:bg-primary/10 hover:shadow-sm">
+                <Shield className="mr-2 h-4 w-4 text-primary"/>{t('nav.police')}
               </Button>
             </nav>
           </div>
@@ -85,27 +85,27 @@ const Header = ({ onCreatePost, onViewBrowse, onViewHome }: HeaderProps) => {
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" className="p-2" onClick={() => setIsMobileMenuOpen(true)}>
-                  <Menu className="h-6 w-6" />
+                <Button variant="ghost" className="p-1 transition-all duration-200 hover:bg-primary/10 hover:shadow-sm" onClick={() => setIsMobileMenuOpen(true)}>
+                  <Menu className="h-5 w-5 text-primary" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0">
+              <SheetContent side="left" className="w-64 p-0 border-r">
                 <div className="flex flex-col h-full">
-                  <div className="flex items-center justify-between px-4 py-4 border-b">
-                    <img className="h-8 w-auto" src={Logo} alt="Logo" onClick={() => { setIsMobileMenuOpen(false); handleViewHome(); }} />
+                  <div className="flex items-center justify-between px-4 py-3 border-b">
+                    <img className="h-7 w-auto" src={Logo} alt="Logo" onClick={() => { setIsMobileMenuOpen(false); handleViewHome(); }} />
                   </div>
-                  <nav className="flex flex-col gap-2 px-4 py-6">
-                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleViewHome(); }} className="justify-start text-gray-700 hover:text-blue-600">
-                      <Home className="mr-2 h-5 w-5"/>{t('nav.home')}
+                  <nav className="flex flex-col gap-1 px-2 py-4">
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleViewHome(); }} className="justify-start text-foreground transition-all duration-200 hover:translate-x-1 hover:shadow-sm">
+                      <Home className="mr-2 h-4 w-4 text-primary"/>{t('nav.home')}
                     </Button>
-                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleViewBrowse(); }} className="justify-start text-gray-700 hover:text-blue-600">
-                      <ListChecks className="mr-2 h-5 w-5"/>{t('nav.browse')}
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleViewBrowse(); }} className="justify-start text-foreground transition-all duration-200 hover:translate-x-1 hover:shadow-sm">
+                      <ListChecks className="mr-2 h-4 w-4 text-primary"/>{t('nav.browse')}
                     </Button>
-                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleCreatePost(); }} className="justify-start text-gray-700 hover:text-blue-600">
-                      <PlusCircle className="mr-2 h-5 w-5"/>{t('nav.report')}
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); handleCreatePost(); }} className="justify-start text-foreground transition-all duration-200 hover:translate-x-1 hover:shadow-sm">
+                      <PlusCircle className="mr-2 h-4 w-4 text-primary"/>{t('nav.report')}
                     </Button>
-                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); navigate('/police'); }} className="justify-start text-gray-700 hover:text-blue-600">
-                      <Shield className="mr-2 h-5 w-5"/>{t('nav.police')}
+                    <Button variant="ghost" onClick={() => { setIsMobileMenuOpen(false); navigate('/police'); }} className="justify-start text-foreground transition-all duration-200 hover:translate-x-1 hover:shadow-sm">
+                      <Shield className="mr-2 h-4 w-4 text-primary"/>{t('nav.police')}
                     </Button>
                   </nav>
                   <div className="px-4 py-4 border-t mt-auto">

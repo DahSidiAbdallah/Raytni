@@ -145,8 +145,8 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <Card className="shadow-xl border-2 border-blue-100 bg-white/80 backdrop-blur-md">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-t-xl p-6">
+      <Card className="shadow-xl border-2 border-primary/20 bg-white/80 backdrop-blur-md">
+        <CardHeader className="bg-gradient-to-r from-primary to-primary/70 rounded-t-xl p-6">
           <CardTitle className="text-3xl text-center text-white font-bold tracking-wide drop-shadow-lg">{t('form.formTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="p-8">
@@ -158,9 +158,9 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.typeLabel')} {t('form.required')}</label>
+                <label className="block text-base font-semibold text-primary mb-2">{t('form.typeLabel')} {t('form.required')}</label>
                 <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value, category: "" })}>
-                  <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
+                  <SelectTrigger className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary">
                     <SelectValue placeholder={t('form.typePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
@@ -172,9 +172,9 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
               </div>
               {formData.type && (
                 <div>
-                  <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.category')} {t('form.required')}</label>
+                  <label className="block text-base font-semibold text-primary mb-2">{t('form.category')} {t('form.required')}</label>
                   <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                    <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
+                    <SelectTrigger className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary">
                       <SelectValue placeholder={t('form.categoryPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -187,18 +187,18 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
               )}
             </div>
             <div>
-              <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.title')} {t('form.required')}</label>
-              <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder={t('form.titlePlaceholder')} value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+              <label className="block text-base font-semibold text-primary mb-2">{t('form.title')} {t('form.required')}</label>
+              <Input className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary" placeholder={t('form.titlePlaceholder')} value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
             </div>
             <div>
-              <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.description')} {t('form.required')}</label>
-              <Textarea className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder={t('form.descriptionPlaceholder')} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={4} />
+              <label className="block text-base font-semibold text-primary mb-2">{t('form.description')} {t('form.required')}</label>
+              <Textarea className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary" placeholder={t('form.descriptionPlaceholder')} value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={4} />
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><MapPin className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.location')} {t('form.required')}</label>
+                <label className="block text-base font-semibold text-primary mb-2"><MapPin className="inline-block mr-1 h-4 w-4 text-primary/70" />{t('form.location')} {t('form.required')}</label>
                 <Select value={formData.location} onValueChange={(value) => setFormData({ ...formData, location: value })}>
-                  <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
+                  <SelectTrigger className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary">
                     <SelectValue placeholder={t('form.locationPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
@@ -209,15 +209,15 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 </Select>
               </div>
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><Calendar className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.date')}</label>
-                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" type="datetime-local" value={formData.dateTime} onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })} />
+                <label className="block text-base font-semibold text-primary mb-2"><Calendar className="inline-block mr-1 h-4 w-4 text-primary/70" />{t('form.date')}</label>
+                <Input className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary" type="datetime-local" value={formData.dateTime} onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })} />
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2">{t('form.status')} {t('form.required')}</label>
+                <label className="block text-base font-semibold text-primary mb-2">{t('form.status')} {t('form.required')}</label>
                 <Select value={formData.status} onValueChange={(value: 'lost' | 'found') => setFormData({ ...formData, status: value })}>
-                  <SelectTrigger className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400">
+                  <SelectTrigger className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary">
                     <SelectValue placeholder={t('form.statusPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
@@ -229,22 +229,22 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
             </div>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.contactName')} {t('form.required')}</label>
-                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" placeholder={t('form.contactNamePlaceholder')} value={formData.contactName} onChange={(e) => setFormData({ ...formData, contactName: e.target.value })} required />
+                <label className="block text-base font-semibold text-primary mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-primary/70" />{t('form.contactName')} {t('form.required')}</label>
+                <Input className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary" placeholder={t('form.contactNamePlaceholder')} value={formData.contactName} onChange={(e) => setFormData({ ...formData, contactName: e.target.value })} required />
               </div>
               <div>
-                <label className="block text-base font-semibold text-blue-700 mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-blue-400" />{t('form.contactPhone')} {t('form.required')}</label>
-                <Input className="rounded-lg border-blue-300 focus:ring-2 focus:ring-blue-400" type="tel" placeholder={t('form.contactPhonePlaceholder')} value={formData.contactPhone} onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })} required />
+                <label className="block text-base font-semibold text-primary mb-2"><Phone className="inline-block mr-1 h-4 w-4 text-primary/70" />{t('form.contactPhone')} {t('form.required')}</label>
+                <Input className="rounded-lg border-primary/30 focus:ring-2 focus:ring-primary" type="tel" placeholder={t('form.contactPhonePlaceholder')} value={formData.contactPhone} onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })} required />
               </div>
             </div>
             <div>
-              <label className="block text-base font-semibold text-blue-700 mb-2 flex items-center gap-2">
-                <ImagePlus className="inline-block h-5 w-5 text-blue-400" />
+              <label className="block text-base font-semibold text-primary mb-2 flex items-center gap-2">
+                <ImagePlus className="inline-block h-5 w-5 text-primary/70" />
                 {t('form.imagesAdd')}
               </label>
               <div className="text-sm text-gray-600 mb-4">{t('form.imagesDescription')}</div>
               {/* Main image upload area */}
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 mb-6 min-h-[220px] relative group transition hover:border-blue-400">
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 flex flex-col items-center justify-center bg-gray-50 mb-6 min-h-[220px] relative group transition-all duration-200 hover:border-primary/70 hover:shadow-md">
                 {imagePreviews.length === 0 ? (
                   <>
                     <div className="flex flex-col items-center justify-center">
@@ -252,7 +252,7 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                       <div className="text-gray-700 font-medium text-center mb-1">{t('form.imagesDragDrop')}</div>
                       <div className="text-xs text-gray-400 mb-4">{t('form.imagesPrimary')}</div>
                       <label htmlFor="main-image-upload" className="inline-block cursor-pointer">
-                        <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">{t('form.imagesBrowseFiles')}</span>
+                        <span className="bg-yellow-400 hover:bg-yellow-500 hover:shadow-md hover:translate-y-[-1px] text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition-all duration-200">{t('form.imagesBrowseFiles')}</span>
                         <Input id="main-image-upload" type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                       </label>
                     </div>
@@ -260,31 +260,31 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
                 ) : (
                   <div className="flex flex-col items-center w-full">
                     <div className="relative w-48 h-48 mb-2">
-                      <img src={imagePreviews[formData.mainImageIndex]} alt="Main preview" className="w-full h-full object-cover rounded-xl border-4 border-blue-500 shadow" />
-                      <button type="button" onClick={() => removeImage(formData.mainImageIndex)} className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow hover:bg-red-600">
+                      <img src={imagePreviews[formData.mainImageIndex]} alt="Main preview" className="w-full h-full object-cover rounded-xl border-4 border-primary shadow" />
+                      <button type="button" onClick={() => removeImage(formData.mainImageIndex)} className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow hover:bg-red-600 hover:shadow-md transition-all duration-200">
                         <X className="h-5 w-5" />
                       </button>
                     </div>
-                    <div className="text-xs text-blue-500 font-medium mb-2">{t('form.imagesCurrentPrimary')}</div>
+                    <div className="text-xs text-primary font-medium mb-2">{t('form.imagesCurrentPrimary')}</div>
                     <label htmlFor="main-image-upload" className="inline-block cursor-pointer">
-                      <span className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition">{t('form.imagesBrowseFiles')}</span>
+                      <span className="bg-yellow-400 hover:bg-yellow-500 hover:shadow-md hover:translate-y-[-1px] text-gray-900 font-semibold px-6 py-2 rounded-lg shadow transition-all duration-200">{t('form.imagesBrowseFiles')}</span>
                       <Input id="main-image-upload" type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
                     </label>
                   </div>
                 )}
               </div>
               {/* Additional images grid */}
-              <div className="mb-2 text-base font-semibold text-blue-700">{t('form.imagesAdditional')}</div>
+              <div className="mb-2 text-base font-semibold text-primary">{t('form.imagesAdditional')}</div>
               <div className="flex gap-4">
                 {[0,1,2,3].map((i) => (
                   <div key={i} className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-white relative overflow-hidden">
                     {imagePreviews[i+1] ? (
                       <>
                         <img src={imagePreviews[i+1]} alt={`Preview ${i+2}`} className="w-full h-full object-cover rounded-xl" />
-                        <button type="button" onClick={() => removeImage(i+1)} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full shadow hover:bg-red-600 z-10">
+                        <button type="button" onClick={() => removeImage(i+1)} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full shadow hover:bg-red-600 hover:shadow-md transition-all duration-200 z-10">
                           <X className="h-4 w-4" />
                         </button>
-                        <button type="button" onClick={() => handleSetMainImage(i+1)} className={`absolute bottom-1 left-1 bg-blue-500 text-white p-1 rounded-full shadow ${formData.mainImageIndex === i+1 ? '' : 'opacity-60 hover:opacity-100'}`}> 
+                        <button type="button" onClick={() => handleSetMainImage(i+1)} className={`absolute bottom-1 left-1 bg-primary text-white p-1 rounded-full shadow ${formData.mainImageIndex === i+1 ? '' : 'opacity-60 hover:opacity-100'}`}> 
                           <Check className="h-4 w-4" />
                         </button>
                       </>
@@ -298,8 +298,8 @@ const CreatePostForm = ({ onBack, onSubmit }: CreatePostFormProps) => {
               </div>
             </div>
             <div className="flex justify-between pt-8">
-              <Button type="button" variant="outline" onClick={onBack} className="rounded-lg px-6 py-2 text-blue-700 border-blue-400 hover:bg-blue-50">{t('form.backButton')}</Button>
-              <Button type="submit" className="rounded-lg px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-semibold shadow-lg hover:from-blue-700 hover:to-blue-500">{t('form.publishButton')}</Button>
+              <Button type="button" variant="outline" onClick={onBack} className="rounded-lg px-6 py-2 text-primary border-primary/40 hover:bg-primary/10 hover:shadow-md hover:translate-y-[-1px] transition-all duration-200">{t('form.backButton')}</Button>
+              <Button type="submit" className="rounded-lg px-8 py-2 bg-primary text-white font-semibold hover:bg-primary/80 hover:shadow-md hover:translate-y-[-1px] transition-all duration-200">{t('form.publishButton')}</Button>
             </div>
           </form>
         </CardContent>

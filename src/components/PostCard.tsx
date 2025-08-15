@@ -33,7 +33,7 @@ const PostCard = ({ post }: PostCardProps) => {
   const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
-    return status === "lost" ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600";
+    return status === "lost" ? "bg-red-500 hover:bg-red-600 hover:shadow-md" : "bg-green-500 hover:bg-green-600 hover:shadow-md";
   };
 
   const getTypeIcon = (type: string) => {
@@ -70,22 +70,21 @@ const PostCard = ({ post }: PostCardProps) => {
   const displayImage = post.mainImageUrl || post.imageUrl || (post.imageUrls && post.imageUrls.length > 0 ? post.imageUrls[0] : null);
 
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-lg group cursor-pointer" onClick={() => navigate(`/post/${post.id}`)}>
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-3">
-            <div className="text-2xl p-2 bg-gray-50 rounded-lg group-hover:bg-gray-100 transition-colors">
+    <Card className="hover:shadow-md hover:translate-y-[-1px] transition-all duration-200 border border-border group cursor-pointer" onClick={() => navigate(`/post/${post.id}`)}>
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-3">
+          <div className="flex items-center gap-2">
+            <div className="text-xl p-1.5 bg-secondary rounded-sm group-hover:bg-primary/10 transition-colors">
               {getTypeIcon(post.type)}
             </div>
-            <Badge className={`${getStatusColor(post.status)} text-white px-3 py-1 font-medium`}>
+            <Badge className={`${post.status === "lost" ? "bg-destructive" : "bg-accent"} text-white px-2 py-0.5 text-xs font-medium rounded-sm`}>
               {post.status === "lost" ? t('browse.statusLost') : t('browse.statusFound')}
             </Badge>
           </div>
-          {/* Removed date display */}
         </div>
 
         {displayImage && (
-          <div className="mb-4 aspect-video rounded-lg overflow-hidden">
+          <div className="mb-3 aspect-video rounded-sm overflow-hidden">
             <img 
               src={displayImage} 
               alt={post.title} 
@@ -94,39 +93,38 @@ const PostCard = ({ post }: PostCardProps) => {
           </div>
         )}
 
-        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+        <h3 className="text-lg font-medium text-foreground mb-2 group-hover:text-primary transition-colors duration-200 line-clamp-2">
           {post.title}
         </h3>
         
-        <p className={`text-gray-600 mb-4 leading-relaxed ${isExpanded ? '' : 'line-clamp-3'}`}>
+        <p className={`text-muted-foreground mb-3 text-sm leading-relaxed ${isExpanded ? '' : 'line-clamp-3'}`}>
           {post.description}
         </p>
 
         {post.description.length > 150 && (
           <button
             onClick={e => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium mb-4 flex items-center gap-1"
+            className="text-primary hover:text-primary/80 hover:translate-x-1 transition-transform duration-200 text-xs font-medium mb-3 flex items-center gap-1"
           >
             <Eye className="h-3 w-3" />
             {isExpanded ? t('browse.seeLess') : t('browse.seeMore')}
           </button>
         )}
 
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center text-gray-700 bg-gray-50 p-3 rounded-lg">
-            <MapPin className="h-4 w-4 mr-3 text-blue-600 flex-shrink-0" />
-            <span className="font-medium">{t('Postcard.location')}: {post.location}</span>
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center text-foreground bg-secondary p-2 rounded-sm text-sm">
+            <MapPin className="h-3.5 w-3.5 mr-2 text-primary flex-shrink-0" />
+            <span>{t('Postcard.location')}: {post.location}</span>
           </div>
-          {/* Removed date and contactName from card */}
         </div>
 
         <Button 
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          className="w-full"
           onClick={e => { e.stopPropagation(); window.open(`tel:${post.contactPhone}`, '_self'); }}
         >
-          <Phone className="h-4 w-4 mr-2" />
-          <span className="font-medium">{t('Postcard.actions.contact')}: {post.contactPhone}</span>
-          <ExternalLink className="h-3 w-3 ml-2" />
+          <Phone className="h-3.5 w-3.5 mr-2" />
+          <span>{t('Postcard.actions.contact')}: {post.contactPhone}</span>
+          <ExternalLink className="h-3 w-3 ml-1" />
         </Button>
       </CardContent>
     </Card>

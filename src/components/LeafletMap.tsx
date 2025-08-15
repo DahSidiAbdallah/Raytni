@@ -62,8 +62,8 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
           <div class="font-semibold">${commissariat.name}${distanceText}</div>
           <div class="text-sm text-gray-700 mb-2">${commissariat.address}</div>
           <div class="flex flex-col gap-2">
-            <div class="text-sm text-blue-700">
-              <a href="tel:${commissariat.phone}" class="hover:underline">
+            <div class="text-sm text-primary">
+              <a href="tel:${commissariat.phone}" class="text-primary hover:underline hover:text-primary/80 transition-all duration-200">
                 📞 ${commissariat.phone}
               </a>
             </div>
@@ -110,7 +110,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
           <div style="
             width: 20px;
             height: 20px;
-            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+            background: hsl(180, 100%, 30%);
             border: 3px solid white;
             border-radius: 50%;
             box-shadow: 0 3px 10px rgba(0,0,0,0.3);
@@ -122,7 +122,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
               left: -15px;
               width: 50px;
               height: 50px;
-              border: 2px solid #3b82f6;
+              border: 2px solid hsl(180, 100%, 30%);
               border-radius: 50%;
               opacity: 0.3;
               animation: userPulse 2s infinite;

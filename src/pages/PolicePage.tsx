@@ -133,7 +133,7 @@ const PolicePage = () => {
   return (
     <div className={`container mx-auto py-8 px-4 ${isRTL ? 'text-right' : ''}`}>
       <div className={`mb-6 ${isRTL ? 'flex flex-row-reverse justify-end' : ''}`}>
-        <Link to="/" className="text-indigo-600 hover:text-indigo-800 transition-colors duration-150 ease-in-out">
+        <Link to="/" className="text-primary hover:text-primary/80 hover:translate-x-1 transition-all duration-200">
           {t('page.police.back')}
         </Link>
       </div>
@@ -208,13 +208,13 @@ const PolicePage = () => {
             {sortedCommissariats.map((commissariat) => (
               <Card 
                 key={commissariat.id} 
-                className="group flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
+                className="group flex flex-col justify-between overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
               >
-                <div className="relative bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 p-1 flex items-center justify-center h-32 overflow-hidden bg-[radial-gradient(theme(colors.blue.100)_1px,transparent_1px)] dark:bg-[radial-gradient(theme(colors.gray.700)_1px,transparent_1px)] bg-[length:20px_20px]">
+                <div className="relative bg-gradient-to-br from-primary/5 to-primary/10 dark:from-gray-800 dark:to-gray-900 p-1 flex items-center justify-center h-32 overflow-hidden bg-[radial-gradient(theme(colors.primary.100)_1px,transparent_1px)] dark:bg-[radial-gradient(theme(colors.gray.700)_1px,transparent_1px)] bg-[length:20px_20px]">
                   <div className="absolute inset-0 bg-white/30 dark:bg-black/20 backdrop-blur-sm" />
                   <div className="relative z-10 text-center p-4">
                     <div className="w-16 h-16 mx-auto mb-3 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-                      <Shield className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                      <Shield className="h-8 w-8 text-primary dark:text-primary/80" />
                     </div>
                     <CardTitle className="text-xl font-bold text-gray-800 dark:text-white">
                       {commissariat.name}

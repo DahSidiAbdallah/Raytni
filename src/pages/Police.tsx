@@ -405,7 +405,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
     <div className="max-w-4xl mx-auto px-4 py-8">
       <button 
         onClick={() => navigate(-1)} 
-        className="mb-4 flex items-center text-blue-600 hover:text-blue-800"
+        className="mb-4 flex items-center text-primary hover:text-primary/80 hover:translate-x-1 transition-all duration-200"
       >
         <ArrowLeft className="h-5 w-5 mr-2" />
         {t('police.back')}
@@ -419,7 +419,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
             <div>
               <div className="text-lg font-semibold mb-3">Numéros d'urgence :</div>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-700 font-bold">
+                <div className="flex items-center gap-2 text-primary font-bold">
                   <Phone className="h-4 w-4" /> 117 - Police d'urgence
                 </div>
                 <div className="flex items-center gap-2 text-green-700 font-bold">
@@ -428,7 +428,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
                 <div className="flex items-center gap-2 text-red-700 font-bold">
                   <Phone className="h-4 w-4" /> 118 - Pompiers
                 </div>
-                <div className="flex items-center gap-2 text-blue-600 font-bold">
+                <div className="flex items-center gap-2 text-primary font-bold">
                   <Phone className="h-4 w-4" /> 116 - Gendarmerie nationale
                 </div>
                 <div className="flex items-center gap-2 text-orange-600 font-bold">
@@ -440,16 +440,16 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
             <div>
               <div className="text-lg font-semibold mb-3">Services spécialisés :</div>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-600">
+                <div className="flex items-center gap-2 text-primary">
                   <Phone className="h-4 w-4" /> 45253990 - Gendarmerie maritime
                 </div>
                 <div className="flex items-center gap-2 text-blue-600">
                   <Phone className="h-4 w-4" /> 45252518 - Brigade mixte de gendarmerie
                 </div>
-                <div className="flex items-center gap-2 text-blue-600">
+                <div className="flex items-center gap-2 text-primary">
                   <Phone className="h-4 w-4" /> 45252159 - Direction générale de la sécurité
                 </div>
-                <div className="flex items-center gap-2 text-blue-600">
+                <div className="flex items-center gap-2 text-primary">
                   <Phone className="h-4 w-4" /> 45255449 - Police judiciaire
                 </div>
               </div>
@@ -457,7 +457,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
             
             <div>
               <div className="text-lg font-semibold mb-3">Contact :</div>
-              <div className="text-blue-700 font-medium">police@interieur.gov.mr</div>
+              <div className="text-primary font-medium">police@interieur.gov.mr</div>
               <div className="text-gray-600 text-sm mt-2">
                 Pour toute urgence, composez le 117
               </div>
@@ -472,7 +472,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
           <CardTitle className="text-2xl text-center">Carte des Commissariats</CardTitle>
           <button 
             onClick={handleSortByProximity}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/80 hover:shadow-md hover:translate-y-[-1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
             disabled={locationStatus === 'requesting'}
           >
             {locationStatus === 'requesting' ? "Localisation..." : 
@@ -481,7 +481,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
         </CardHeader>
         <CardContent>
           {locationStatus === 'requesting' && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-md">
+            <div className="mb-4 p-3 bg-primary/5 border border-primary/20 text-primary rounded-md">
               🌍 Demande d'accès à votre localisation...
             </div>
           )}
@@ -494,13 +494,13 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
                 <div className="flex gap-2 ml-4">
                   <button
                     onClick={showPermissionHelp}
-                    className="px-3 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-3 py-1 text-xs font-medium text-primary bg-primary/10 rounded hover:bg-primary/20 hover:shadow-sm hover:translate-y-[-1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {t('police.permissionHelp')}
                   </button>
                   <button
                     onClick={handleSortByProximity}
-                    className="px-3 py-1 text-xs font-medium text-amber-600 bg-amber-100 rounded hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="px-3 py-1 text-xs font-medium text-amber-600 bg-amber-100 rounded hover:bg-amber-200 hover:shadow-sm hover:translate-y-[-1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   >
                     {t('police.resetPermissions')}
                   </button>
@@ -511,7 +511,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
                   setLocationStatus('requesting');
                   handleSortByProximity();
                 }}
-                className="ml-2 px-3 py-1 bg-amber-600 text-white text-sm rounded hover:bg-amber-700"
+                className="ml-2 px-3 py-1 bg-amber-600 text-white text-sm rounded hover:bg-amber-700 hover:shadow-sm hover:translate-y-[-1px] transition-all duration-200"
               >
                 Réessayer
               </button>
@@ -525,7 +525,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
                   setLocationStatus('requesting');
                   handleSortByProximity();
                 }}
-                className="ml-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                className="ml-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 hover:shadow-sm hover:translate-y-[-1px] transition-all duration-200"
               >
                 Réessayer
               </button>
@@ -562,7 +562,7 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex-1">
                     <div className="font-semibold flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-blue-600" /> {c.name}
+                      <MapPin className="h-4 w-4 text-primary" /> {c.name}
                       {c.distance && (
                         <span className="text-sm text-gray-500 font-normal">
                           ({c.distance.toFixed(1)} km)
@@ -573,16 +573,16 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
                   </div>
                   
                   <div className="flex items-center gap-3 ml-6 md:ml-0">
-                    <div className="text-blue-700 font-medium flex items-center gap-2">
+                    <div className="text-primary font-medium flex items-center gap-2">
                       <Phone className="h-4 w-4" />
-                      <a href={`tel:${c.phone}`} onClick={e => e.stopPropagation()} className="hover:underline">
+                      <a href={`tel:${c.phone}`} onClick={e => e.stopPropagation()} className="hover:underline hover:text-primary/80 transition-colors duration-200">
                         {c.phone}
                       </a>
                     </div>
                     
                     <button
                       onClick={() => openDirections(c.position[0], c.position[1], c.name)}
-                      className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                      className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 hover:shadow-sm hover:translate-y-[-1px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                       title={userLocation ? `Itinéraire vers ${c.name}` : `Voir ${c.name} sur la carte`}
                     >
                       <Navigation className="h-4 w-4" />
@@ -597,6 +597,6 @@ Si cela ne fonctionne pas, effacez les données du site dans les paramètres du 
       </Card>
     </div>
   );
-} 
+}
 
 
