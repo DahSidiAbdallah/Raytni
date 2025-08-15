@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-3 gap-6"> 
           <div>
             <div className="flex items-center mb-3">
-              <img src="/footer.png" alt="Logo" className="h-12 w-12" />
+              <img src="/footer.png" alt="Logo" className="h-10 w-10" />
             </div>
             <p className="text-primary-foreground/80 text-sm">
               {t('footer.description')}
