@@ -2,9 +2,12 @@ import React, { ReactNode } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useNavigate, Outlet } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 const MainLayout = () => {
   const navigate = useNavigate();
+  const { isChangingLanguage } = useLanguage();
 
   const handleCreatePost = () => {
     console.log('Navigate to create post');
@@ -23,6 +26,7 @@ const MainLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen w-full">
+      <LoadingOverlay isLoading={isChangingLanguage} />
       <Header 
         onCreatePost={handleCreatePost}
         onViewBrowse={handleViewBrowse}

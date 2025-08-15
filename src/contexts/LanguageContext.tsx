@@ -10,6 +10,7 @@ interface LanguageContextType {
   currentLanguage: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  isChangingLanguage: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -51,13 +52,27 @@ i18next
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState<Language>(initialLanguage);
+  const [isChangingLanguage, setIsChangingLanguage] = useState<boolean>(false);
 
   const setLanguage = (lang: Language) => {
+    if (lang === currentLanguage) return;
+    
+    setIsChangingLanguage(true);
     setCurrentLanguage(lang);
-    i18next.changeLanguage(lang);
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang;
-    localStorage.setItem('language', lang);
+    
+    // Small delay to allow UI to show loading state
+    setTimeout(() => {
+      i18next.changeLanguage(lang).then(() => {
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = lang;
+        localStorage.setItem('language', lang);
+        
+        // Add a small delay to ensure translations are applied
+        setTimeout(() => {
+          setIsChangingLanguage(false);
+        }, 300);
+      });
+    }, 100);  
   };
 
   useEffect(() => {
@@ -70,6 +85,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     <LanguageContext.Provider value={{
       currentLanguage,
       setLanguage,
+      isChangingLanguage,
       t: (key: string) => i18next.t(key)
     }}>
       {children}

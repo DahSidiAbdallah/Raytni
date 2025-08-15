@@ -1,4 +1,4 @@
-import { Globe } from "lucide-react";
+import { Globe, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,7 +9,7 @@ import {
 import { useLanguage } from "../contexts/LanguageContext";
 
 const LanguageSelector = () => {
-  const { currentLanguage, setLanguage } = useLanguage();
+  const { currentLanguage, setLanguage, isChangingLanguage } = useLanguage();
 
   const languages = [
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
@@ -21,8 +21,12 @@ const LanguageSelector = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-9 px-3">
-          <Globe className="h-4 w-4 mr-2" />
+        <Button variant="ghost" size="sm" className="h-9 px-3" disabled={isChangingLanguage}>
+          {isChangingLanguage ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Globe className="h-4 w-4 mr-2" />
+          )}
           <span className="hidden sm:inline">{currentLangObj?.flag}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -31,9 +35,10 @@ const LanguageSelector = () => {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => setLanguage(lang.code as any)}
+            disabled={isChangingLanguage || currentLanguage === lang.code}
             className={`flex items-center gap-2 cursor-pointer ${
               currentLanguage === lang.code ? 'bg-primary/10 text-primary' : ''
-            }`}
+            } ${isChangingLanguage ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <span>{lang.flag}</span>
             <span>{lang.name}</span>
